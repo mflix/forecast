@@ -33,7 +33,7 @@ public class TestController {
     @PostMapping("/")
     public ResponseEntity<ResponseView> postByBody(@Valid @RequestBody TestView testView) {
         testView = testService.create(testView);
-        return responseComponent.generate(StatusEnumeration.S0, HttpStatus.OK);
+        return responseComponent.generate(StatusEnumeration.S0, HttpStatus.OK, testView);
     }
 
     @GetMapping("/")
