@@ -1,7 +1,10 @@
 package org.mflix.forecast.controller;
 
+import javax.validation.Valid;
+
 import org.mflix.forecast.component.ResponseComponent;
-import org.mflix.forecast.enumeration.ResponseEnumeration;
+import org.mflix.forecast.enumeration.StatusEnumeration;
+import org.mflix.forecast.exception.ApplicationException;
 import org.mflix.forecast.service.TestService;
 import org.mflix.forecast.view.ResponseView;
 import org.mflix.forecast.view.TestView;
@@ -29,40 +32,52 @@ public class TestController {
 
     @PreAuthorize("hasRole('TEST')")
     @PostMapping("/")
-    public ResponseEntity<ResponseView> post(@RequestBody TestView testView) {
+    public ResponseEntity<ResponseView> postByBody(@Valid @RequestBody TestView testView) {
         testView = testService.create(testView);
-        return responseComponent.generate(ResponseEnumeration.S0, HttpStatus.OK, testView);
+        return responseComponent.generate(StatusEnumeration.S0, HttpStatus.OK, testView);
     }
 
     @GetMapping("/")
     public ResponseEntity<ResponseView> getAll() {
         var testViewList = testService.readAll();
-        return responseComponent.generate(ResponseEnumeration.S0, HttpStatus.OK, testViewList);
+        return responseComponent.generate(StatusEnumeration.S0, HttpStatus.OK, testViewList);
     }
 
     @GetMapping("/page/")
     public ResponseEntity<ResponseView> getAllWithPage(Pageable pageable) {
         var testViewPage = testService.readAllWithPage(pageable);
-        return responseComponent.generate(ResponseEnumeration.S0, HttpStatus.OK, testViewPage);
+        return responseComponent.generate(StatusEnumeration.S0, HttpStatus.OK, testViewPage);
     }
 
     @GetMapping("/{id}/")
-    public ResponseEntity<ResponseView> get(@PathVariable long id) {
-        TestView testView = testService.read(id);
-        return responseComponent.generate(ResponseEnumeration.S0, HttpStatus.OK, testView);
+    public ResponseEntity<ResponseView> getById(@PathVariable long id) {
+        try {
+            TestView testView = testService.read(id);
+            return responseComponent.generate(StatusEnumeration.S0, HttpStatus.OK, testView);
+        } catch (ApplicationException e) {
+            return responseComponent.generate(StatusEnumeration.F1, HttpStatus.NOT_FOUND);
+        }
     }
 
     @PreAuthorize("hasRole('TEST')")
     @PutMapping("/{id}/")
-    public ResponseEntity<ResponseView> put(@PathVariable long id, @RequestBody TestView testView) {
-        testView = testService.update(id, testView);
-        return responseComponent.generate(ResponseEnumeration.S0, HttpStatus.OK, testView);
+    public ResponseEntity<ResponseView> putByIdWithBody(@PathVariable long id, @Valid @RequestBody TestView testView) {
+        try {
+            testView = testService.update(id, testView);
+            return responseComponent.generate(StatusEnumeration.S0, HttpStatus.OK, testView);
+        } catch (ApplicationException e) {
+            return responseComponent.generate(StatusEnumeration.F1, HttpStatus.NOT_FOUND);
+        }
     }
 
     @PreAuthorize("hasRole('TEST')")
     @DeleteMapping("/{id}/")
-    public ResponseEntity<ResponseView> delete(@PathVariable long id) {
-        testService.delete(id);
-        return responseComponent.generate(ResponseEnumeration.S0, HttpStatus.OK);
+    public ResponseEntity<ResponseView> deleteById(@PathVariable long id) {
+        try {
+            testService.delete(id);
+            return responseComponent.generate(StatusEnumeration.S0, HttpStatus.OK);
+        } catch (ApplicationException e) {
+            return responseComponent.generate(StatusEnumeration.F1, HttpStatus.NOT_FOUND);
+        }
     }
 }
