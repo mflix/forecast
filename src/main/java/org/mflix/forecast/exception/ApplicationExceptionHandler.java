@@ -19,19 +19,19 @@ public class ApplicationExceptionHandler {
 
     @ExceptionHandler
     public ResponseEntity<ResponseView> handlerNoSuchElement(NoSuchElementException e) {
-        String message = e.getMessage().toUpperCase();
+        String message = e.getMessage().toLowerCase();
         return responseComponent.generate(1, message, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler
     public ResponseEntity<ResponseView> handlerMethodArgumentNotValid(MethodArgumentNotValidException e) {
-        String message = e.getBindingResult().getFieldError().getDefaultMessage().toUpperCase();
+        String message = e.getBindingResult().getFieldError().getDefaultMessage().toLowerCase();
         return responseComponent.generate(2, message, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler
     public ResponseEntity<ResponseView> hadlerEmptyResultDataAccessException(EmptyResultDataAccessException e) {
-        String message = e.getMessage().toUpperCase();
+        String message = e.getMessage().toLowerCase();
         return responseComponent.generate(1, message, HttpStatus.NOT_FOUND);
     }
 }
