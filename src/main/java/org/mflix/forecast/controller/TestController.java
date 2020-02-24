@@ -4,7 +4,6 @@ import javax.validation.Valid;
 
 import org.mflix.forecast.component.ResponseComponent;
 import org.mflix.forecast.enumeration.StatusEnumeration;
-import org.mflix.forecast.exception.ApplicationException;
 import org.mflix.forecast.service.TestService;
 import org.mflix.forecast.view.ResponseView;
 import org.mflix.forecast.view.TestView;
@@ -34,7 +33,7 @@ public class TestController {
     @PostMapping("/")
     public ResponseEntity<ResponseView> postByBody(@Valid @RequestBody TestView testView) {
         testView = testService.create(testView);
-        return responseComponent.generate(StatusEnumeration.S0, HttpStatus.OK, testView);
+        return responseComponent.generate(StatusEnumeration.S0, HttpStatus.OK);
     }
 
     @GetMapping("/")
@@ -51,33 +50,21 @@ public class TestController {
 
     @GetMapping("/{id}/")
     public ResponseEntity<ResponseView> getById(@PathVariable long id) {
-        try {
-            TestView testView = testService.read(id);
-            return responseComponent.generate(StatusEnumeration.S0, HttpStatus.OK, testView);
-        } catch (ApplicationException e) {
-            return responseComponent.generate(StatusEnumeration.F1, HttpStatus.NOT_FOUND);
-        }
+        TestView testView = testService.read(id);
+        return responseComponent.generate(StatusEnumeration.S0, HttpStatus.OK, testView);
     }
 
     @PreAuthorize("hasRole('TEST')")
     @PutMapping("/{id}/")
     public ResponseEntity<ResponseView> putByIdWithBody(@PathVariable long id, @Valid @RequestBody TestView testView) {
-        try {
-            testView = testService.update(id, testView);
-            return responseComponent.generate(StatusEnumeration.S0, HttpStatus.OK, testView);
-        } catch (ApplicationException e) {
-            return responseComponent.generate(StatusEnumeration.F1, HttpStatus.NOT_FOUND);
-        }
+        testView = testService.update(id, testView);
+        return responseComponent.generate(StatusEnumeration.S0, HttpStatus.OK, testView);
     }
 
     @PreAuthorize("hasRole('TEST')")
     @DeleteMapping("/{id}/")
     public ResponseEntity<ResponseView> deleteById(@PathVariable long id) {
-        try {
-            testService.delete(id);
-            return responseComponent.generate(StatusEnumeration.S0, HttpStatus.OK);
-        } catch (ApplicationException e) {
-            return responseComponent.generate(StatusEnumeration.F1, HttpStatus.NOT_FOUND);
-        }
+        testService.delete(id);
+        return responseComponent.generate(StatusEnumeration.S0, HttpStatus.OK);
     }
 }

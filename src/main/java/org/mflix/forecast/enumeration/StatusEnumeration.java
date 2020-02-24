@@ -4,7 +4,7 @@ import lombok.Getter;
 
 @Getter
 public enum StatusEnumeration {
-    S0(0, "SUCCESS"), F1(1, "NOT SUCH OBJECT");
+    S0(0, "SUCCESS");
 
     private int code;
     private String message;

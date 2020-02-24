@@ -1,12 +1,9 @@
 package org.mflix.forecast.service;
 
 import java.util.List;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import org.mflix.forecast.entity.TestEntity;
-import org.mflix.forecast.enumeration.StatusEnumeration;
-import org.mflix.forecast.exception.ApplicationException;
 import org.mflix.forecast.repository.TestRepository;
 import org.mflix.forecast.view.TestView;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,9 +24,8 @@ public class TestService {
         return testView;
     }
 
-    public TestView read(long id) throws ApplicationException {
-        TestEntity testEntity = testRepository.findById(id)
-                .orElseThrow(() -> ApplicationException.with(StatusEnumeration.F1));
+    public TestView read(long id) {
+        TestEntity testEntity = testRepository.findById(id).orElseThrow();
         TestView testView = new TestView(testEntity.getId(), testEntity.getText());
         return testView;
     }
@@ -47,18 +43,15 @@ public class TestService {
         return new PageImpl<>(testViewList, pageable, testViewList.size());
     }
 
-    public TestView update(long id, TestView testView) throws ApplicationException {
-        TestEntity testEntity = testRepository.findById(id)
-                .orElseThrow(() -> ApplicationException.with(StatusEnumeration.F1));
+    public TestView update(long id, TestView testView) {
+        TestEntity testEntity = testRepository.findById(id).orElseThrow();
         testEntity.setText(testView.getText());
         testEntity = testRepository.save(testEntity);
         testView.setId(testEntity.getId());
         return testView;
     }
 
-    public void delete(long id) throws ApplicationException {
-        TestEntity testEntity = testRepository.findById(id)
-                .orElseThrow(() -> ApplicationException.with(StatusEnumeration.F1));
-        testRepository.delete(testEntity);
+    public void delete(long id) {
+        testRepository.deleteById(id);
     }
 }

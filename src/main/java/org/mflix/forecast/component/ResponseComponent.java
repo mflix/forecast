@@ -8,11 +8,13 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class ResponseComponent {
-    public ResponseEntity<ResponseView> generate(StatusEnumeration statusEnumeration, HttpStatus httpStatus) {
-        ResponseView responseView = new ResponseView();
-        responseView.setCode(statusEnumeration.getCode());
-        responseView.setMessage(statusEnumeration.getMessage());
+    public ResponseEntity<ResponseView> generate(int code, String message, HttpStatus httpStatus) {
+        ResponseView responseView = new ResponseView(code, message);
         return new ResponseEntity<>(responseView, httpStatus);
+    }
+
+    public ResponseEntity<ResponseView> generate(StatusEnumeration statusEnumeration, HttpStatus httpStatus) {
+        return generate(statusEnumeration.getCode(), statusEnumeration.getMessage(), httpStatus);
     }
 
     public ResponseEntity<ResponseView> generate(StatusEnumeration statusEnumeration, HttpStatus httpStatus,
