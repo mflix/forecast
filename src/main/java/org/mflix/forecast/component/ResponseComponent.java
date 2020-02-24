@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class ResponseComponent {
     public ResponseEntity<ResponseView> generate(int code, String message, HttpStatus httpStatus) {
-        ResponseView responseView = new ResponseView(code, message);
+        var responseView = new ResponseView(code, message);
         return new ResponseEntity<>(responseView, httpStatus);
     }
 
@@ -18,8 +18,15 @@ public class ResponseComponent {
     }
 
     public ResponseEntity<ResponseView> generate(StatusEnumeration statusEnumeration, HttpStatus httpStatus,
+            String cause) {
+        var responseEntity = generate(statusEnumeration, httpStatus);
+        responseEntity.getBody().setCause(cause);
+        return responseEntity;
+    }
+
+    public ResponseEntity<ResponseView> generate(StatusEnumeration statusEnumeration, HttpStatus httpStatus,
             Object object) {
-        ResponseEntity<ResponseView> responseEntity = generate(statusEnumeration, httpStatus);
+        var responseEntity = generate(statusEnumeration, httpStatus);
         responseEntity.getBody().setObject(object);
         return responseEntity;
     }

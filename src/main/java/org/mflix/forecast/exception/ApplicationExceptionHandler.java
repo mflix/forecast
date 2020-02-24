@@ -3,6 +3,7 @@ package org.mflix.forecast.exception;
 import java.util.NoSuchElementException;
 
 import org.mflix.forecast.component.ResponseComponent;
+import org.mflix.forecast.enumeration.StatusEnumeration;
 import org.mflix.forecast.view.ResponseView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -17,21 +18,19 @@ public class ApplicationExceptionHandler {
     @Autowired
     private ResponseComponent responseComponent;
 
-    @ExceptionHandler
-    public ResponseEntity<ResponseView> handlerNoSuchElement(NoSuchElementException e) {
-        String message = e.getMessage().toLowerCase();
-        return responseComponent.generate(1, message, HttpStatus.NOT_FOUND);
-    }
-
-    @ExceptionHandler
-    public ResponseEntity<ResponseView> handlerMethodArgumentNotValid(MethodArgumentNotValidException e) {
-        String message = e.getBindingResult().getFieldError().getDefaultMessage().toLowerCase();
-        return responseComponent.generate(2, message, HttpStatus.BAD_REQUEST);
-    }
-
-    @ExceptionHandler
-    public ResponseEntity<ResponseView> hadlerEmptyResultDataAccessException(EmptyResultDataAccessException e) {
-        String message = e.getMessage().toLowerCase();
-        return responseComponent.generate(1, message, HttpStatus.NOT_FOUND);
+    @ExceptionHandler({ NoSuchElementException.class, EmptyResultDataAccessException.class,
+            MethodArgumentNotValidException.class })
+    public ResponseEntity<ResponseView> handlerNoSuchElement(Exception e) {
+        if (e instanceof NoSuchElementException || e instanceof EmptyResultDataAccessException) {
+            var message = e.getMessage().toLowerCase();
+            return responseComponent.generate(StatusEnumeration.F1, HttpStatus.NOT_FOUND, message);
+        } else if (e instanceof MethodArgumentNotValidException) {
+            var fieldError = ((MethodArgumentNotValidException) e).getBindingResult().getFieldError();
+            fieldError.getField();
+            fieldError.getDefaultMessage();
+            var message = ("[" + fieldError.getField() + "] " + fieldError.getDefaultMessage()).toLowerCase();
+            return responseComponent.generate(StatusEnumeration.F2, HttpStatus.BAD_REQUEST, message);
+        }
+        return responseComponent.generate(StatusEnumeration.S0, HttpStatus.OK);
     }
 }

@@ -18,15 +18,15 @@ public class TestService {
     private TestRepository testRepository;
 
     public TestView create(TestView testView) {
-        TestEntity testEntity = new TestEntity(testView.getText());
+        var testEntity = new TestEntity(testView.getText());
         testEntity = testRepository.save(testEntity);
         testView.setId(testEntity.getId());
         return testView;
     }
 
     public TestView read(long id) {
-        TestEntity testEntity = testRepository.findById(id).orElseThrow();
-        TestView testView = new TestView(testEntity.getId(), testEntity.getText());
+        var testEntity = testRepository.findById(id).orElseThrow();
+        var testView = new TestView(testEntity.getId(), testEntity.getText());
         return testView;
     }
 
@@ -37,14 +37,14 @@ public class TestService {
     }
 
     public Page<TestView> readAllWithPage(Pageable pageable) {
-        List<TestView> testViewList = testRepository.findAll(pageable).map((testEntity) -> {
+        var testViewList = testRepository.findAll(pageable).map((testEntity) -> {
             return new TestView(testEntity.getId(), testEntity.getText());
         }).toList();
         return new PageImpl<>(testViewList, pageable, testViewList.size());
     }
 
     public TestView update(long id, TestView testView) {
-        TestEntity testEntity = testRepository.findById(id).orElseThrow();
+        var testEntity = testRepository.findById(id).orElseThrow();
         testEntity.setText(testView.getText());
         testEntity = testRepository.save(testEntity);
         testView.setId(testEntity.getId());

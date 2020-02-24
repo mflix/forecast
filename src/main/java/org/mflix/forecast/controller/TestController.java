@@ -50,7 +50,7 @@ public class TestController {
 
     @GetMapping("/{id}/")
     public ResponseEntity<ResponseView> getById(@PathVariable long id) {
-        TestView testView = testService.read(id);
+        var testView = testService.read(id);
         return responseComponent.generate(StatusEnumeration.S0, HttpStatus.OK, testView);
     }
 
