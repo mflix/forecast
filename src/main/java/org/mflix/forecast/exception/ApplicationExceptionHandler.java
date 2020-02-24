@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -19,7 +20,7 @@ public class ApplicationExceptionHandler {
     private ResponseComponent responseComponent;
 
     @ExceptionHandler({ NoSuchElementException.class, EmptyResultDataAccessException.class,
-            MethodArgumentNotValidException.class })
+            MethodArgumentNotValidException.class, HttpRequestMethodNotSupportedException.class })
     public ResponseEntity<ResponseView> handlerNoSuchElement(Exception e) {
         if (e instanceof NoSuchElementException || e instanceof EmptyResultDataAccessException) {
             var message = e.getMessage().toLowerCase();
@@ -30,6 +31,9 @@ public class ApplicationExceptionHandler {
             fieldError.getDefaultMessage();
             var message = ("[" + fieldError.getField() + "] " + fieldError.getDefaultMessage()).toLowerCase();
             return responseComponent.generate(StatusEnumeration.F2, HttpStatus.BAD_REQUEST, message);
+        } else if (e instanceof HttpRequestMethodNotSupportedException) {
+            var message = e.getMessage().toLowerCase();
+            return responseComponent.generate(StatusEnumeration.F3, HttpStatus.BAD_REQUEST, message);
         }
         return responseComponent.generate(StatusEnumeration.S0, HttpStatus.OK);
     }
