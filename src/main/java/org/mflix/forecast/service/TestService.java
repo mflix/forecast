@@ -17,16 +17,10 @@ public class TestService {
     @Autowired
     private TestRepository testRepository;
 
-    public TestView create(TestView testView) {
+    public TestView createByView(TestView testView) {
         var testEntity = new TestEntity(testView.getText());
         testEntity = testRepository.save(testEntity);
         testView.setId(testEntity.getId());
-        return testView;
-    }
-
-    public TestView read(long id) {
-        var testEntity = testRepository.findById(id).orElseThrow();
-        var testView = new TestView(testEntity.getId(), testEntity.getText());
         return testView;
     }
 
@@ -43,7 +37,12 @@ public class TestService {
         return new PageImpl<>(testViewList, pageable, testViewList.size());
     }
 
-    public TestView update(long id, TestView testView) {
+    public TestView readById(long id) {
+        var testEntity = testRepository.findById(id).orElseThrow();
+        return new TestView(testEntity.getId(), testEntity.getText());
+    }
+
+    public TestView updateByIdAndView(long id, TestView testView) {
         var testEntity = testRepository.findById(id).orElseThrow();
         testEntity.setText(testView.getText());
         testEntity = testRepository.save(testEntity);
@@ -51,7 +50,7 @@ public class TestService {
         return testView;
     }
 
-    public void delete(long id) {
+    public void deleteById(long id) {
         testRepository.deleteById(id);
     }
 }

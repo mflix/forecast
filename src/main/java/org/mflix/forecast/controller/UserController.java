@@ -4,14 +4,13 @@ import javax.validation.Valid;
 
 import org.mflix.forecast.component.ResponseComponent;
 import org.mflix.forecast.enumeration.StatusEnumeration;
-import org.mflix.forecast.service.TestService;
+import org.mflix.forecast.service.UserService;
 import org.mflix.forecast.view.ResponseView;
-import org.mflix.forecast.view.TestView;
+import org.mflix.forecast.view.UserView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,49 +21,46 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/test")
-public class TestController {
+@RequestMapping("/user")
+public class UserController {
     @Autowired
-    private TestService testService;
+    private UserService userService;
     @Autowired
     private ResponseComponent responseComponent;
 
-    @PreAuthorize("hasRole('TEST')")
     @PostMapping("/")
-    public ResponseEntity<ResponseView> postByView(@Valid @RequestBody TestView testView) {
-        testView = testService.createByView(testView);
-        return responseComponent.generate(StatusEnumeration.S0, HttpStatus.OK, testView);
+    public ResponseEntity<ResponseView> postByView(@Valid @RequestBody UserView userView) {
+        userView = userService.createByView(userView);
+        return responseComponent.generate(StatusEnumeration.S0, HttpStatus.OK, userView);
     }
 
     @GetMapping("/")
     public ResponseEntity<ResponseView> getAll() {
-        var testViewList = testService.readAll();
-        return responseComponent.generate(StatusEnumeration.S0, HttpStatus.OK, testViewList);
+        var userViewList = userService.readAll();
+        return responseComponent.generate(StatusEnumeration.S0, HttpStatus.OK, userViewList);
     }
 
     @GetMapping("/page/")
     public ResponseEntity<ResponseView> getAllWithPage(Pageable pageable) {
-        var testViewPage = testService.readAllWithPage(pageable);
-        return responseComponent.generate(StatusEnumeration.S0, HttpStatus.OK, testViewPage);
+        var userViewPage = userService.readAllWithPage(pageable);
+        return responseComponent.generate(StatusEnumeration.S0, HttpStatus.OK, userViewPage);
     }
 
     @GetMapping("/{id}/")
     public ResponseEntity<ResponseView> getById(@PathVariable long id) {
-        var testView = testService.readById(id);
-        return responseComponent.generate(StatusEnumeration.S0, HttpStatus.OK, testView);
+        var userView = userService.readById(id);
+        return responseComponent.generate(StatusEnumeration.S0, HttpStatus.OK, userView);
     }
 
-    @PreAuthorize("hasRole('TEST')")
     @PutMapping("/{id}/")
-    public ResponseEntity<ResponseView> putByIdAndView(@PathVariable long id, @Valid @RequestBody TestView testView) {
-        testView = testService.updateByIdAndView(id, testView);
-        return responseComponent.generate(StatusEnumeration.S0, HttpStatus.OK, testView);
+    public ResponseEntity<ResponseView> putByIdAndView(@PathVariable long id, @Valid @RequestBody UserView userView) {
+        userView = userService.updateByIdAndView(id, userView);
+        return responseComponent.generate(StatusEnumeration.S0, HttpStatus.OK, userView);
     }
 
-    @PreAuthorize("hasRole('TEST')")
     @DeleteMapping("/{id}/")
     public ResponseEntity<ResponseView> deleteById(@PathVariable long id) {
-        testService.deleteById(id);
+        userService.deleteById(id);
         return responseComponent.generate(StatusEnumeration.S0, HttpStatus.OK);
     }
 }
