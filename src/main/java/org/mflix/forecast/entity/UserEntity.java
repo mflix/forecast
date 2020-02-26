@@ -8,7 +8,6 @@ import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.Table;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -17,7 +16,6 @@ import lombok.Data;
 
 @Data
 @Entity
-@Table(name = "user")
 public class UserEntity implements UserDetails {
     private static final long serialVersionUID = 7286614557063497011L;
     @Id
@@ -25,7 +23,6 @@ public class UserEntity implements UserDetails {
     private long id;
     private boolean accountNonExpired;
     private boolean accountNonLocked;
-    @Column(name = "authorities")
     @ElementCollection
     private Set<GrantedAuthority> authorities;
     private boolean credentialsNonExpired;
@@ -34,6 +31,11 @@ public class UserEntity implements UserDetails {
     @Column(unique = true)
     private String username;
     private Date date;
+
+    private String email;
+    private String nickname;
+    private String gender;
+    private String avatarUrl;
 
     public UserEntity() {
     }

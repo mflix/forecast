@@ -13,6 +13,7 @@ public class TestView {
     private long id;
     @NotBlank
     private String text;
+    private String fileName;
 
     public TestView() {
     }
