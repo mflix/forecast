@@ -23,10 +23,14 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/user")
 public class UserController {
+    private final ResponseComponent responseComponent;
+    private final UserService userService;
+
     @Autowired
-    private UserService userService;
-    @Autowired
-    private ResponseComponent responseComponent;
+    public UserController(ResponseComponent responseComponent, UserService userService) {
+        this.responseComponent = responseComponent;
+        this.userService = userService;
+    }
 
     @PostMapping("/")
     public ResponseEntity<ResponseView> postByView(@Valid @RequestBody UserView userView) {

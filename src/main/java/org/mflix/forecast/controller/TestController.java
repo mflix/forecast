@@ -8,6 +8,7 @@ import org.mflix.forecast.service.TestService;
 import org.mflix.forecast.view.ResponseView;
 import org.mflix.forecast.view.TestView;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,10 +27,14 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 @RequestMapping("/test")
 public class TestController {
+    private final TestService testService;
+    private final ResponseComponent responseComponent;
+
     @Autowired
-    private TestService testService;
-    @Autowired
-    private ResponseComponent responseComponent;
+    public TestController(ResponseComponent responseComponent, TestService testService) {
+        this.testService = testService;
+        this.responseComponent = responseComponent;
+    }
 
     // @PreAuthorize("hasRole('TEST')")
     @PostMapping("/")
@@ -70,5 +75,12 @@ public class TestController {
     public ResponseEntity<ResponseView> deleteById(@PathVariable long id) {
         testService.deleteById(id);
         return responseComponent.generate(StatusEnumeration.S0, HttpStatus.OK);
+    }
+
+    // image/png
+    @GetMapping("/file/{filename}")
+    public ResponseEntity<FileSystemResource> getFile(@PathVariable String filename) {
+        var file = testService.getFile(filename);
+        return responseComponent.generate(file, HttpStatus.OK);
     }
 }

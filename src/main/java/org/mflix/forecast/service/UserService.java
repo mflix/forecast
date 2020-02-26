@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import org.mflix.forecast.component.RoleComponent;
 import org.mflix.forecast.entity.UserEntity;
 import org.mflix.forecast.enumeration.RoleEnumeration;
+import org.mflix.forecast.properties.ApplicationProperties;
 import org.mflix.forecast.repository.UserRepository;
 import org.mflix.forecast.view.UserView;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,11 +23,19 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class UserService implements UserDetailsService {
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private RoleComponent roleComponent;
+    private final RoleComponent roleComponent;
+    private final ApplicationProperties applicationProperties;
+    private final UserRepository userRepository;
+
     private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
+    @Autowired
+    public UserService(RoleComponent roleComponent, ApplicationProperties applicationProperties,
+            UserRepository userRepository) {
+        this.roleComponent = roleComponent;
+        this.applicationProperties = applicationProperties;
+        this.userRepository = userRepository;
+    }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {

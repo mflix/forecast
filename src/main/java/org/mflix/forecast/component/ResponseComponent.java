@@ -2,7 +2,10 @@ package org.mflix.forecast.component;
 
 import org.mflix.forecast.enumeration.StatusEnumeration;
 import org.mflix.forecast.view.ResponseView;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
@@ -29,5 +32,11 @@ public class ResponseComponent {
         var responseEntity = generate(statusEnumeration, httpStatus);
         responseEntity.getBody().setObject(object);
         return responseEntity;
+    }
+
+    public ResponseEntity<FileSystemResource> generate(FileSystemResource fileSystemResource, HttpStatus httpStatus) {
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
+        return new ResponseEntity<>(fileSystemResource, httpHeaders, httpStatus);
     }
 }
