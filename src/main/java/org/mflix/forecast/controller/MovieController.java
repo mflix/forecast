@@ -55,4 +55,10 @@ public class MovieController {
         var movieView = movieService.readById(id);
         return responseComponent.generate(StatusEnumeration.S0, HttpStatus.OK, movieView);
     }
+
+    @GetMapping("/launch/page/")
+    public ResponseEntity<ResponseView> getAllByLaunchWithPage(Pageable pageable) {
+        var movieView = movieService.readAllSortByLaunchDateWithPage(pageable);
+        return responseComponent.generate(StatusEnumeration.S0, HttpStatus.OK, movieView);
+    }
 }

@@ -113,6 +113,42 @@ public class MovieService {
         return new PageImpl<>(movieViewList, pageable, movieViewList.size());
     }
 
+    public Page<MovieView> readAllSortByLaunchDateWithPage(Pageable pageable) {
+        var movieViewList = launchRepository.findAll(pageable).map((launchEntity) -> {
+            var movieEnity = movieRepository.findById(launchEntity.getMovieId()).orElseThrow();
+            System.out.println();
+            return new MovieView(movieEnity.getId(), movieEnity.getChineseName(), launchEntity.getDate(),
+                    launchEntity.getType(), movieEnity.getOriginName(), movieEnity.getPosterUrl(),
+                    movieEnity.getScore());
+        }).map((movieView) -> {
+            var movieId = movieView.getId();
+
+            var country = movieCountryRepository.findByMovieId(movieId).stream().map((movieCountryEntity) -> {
+                return countryRepository.findById(movieCountryEntity.getCountryId()).orElseThrow().getName();
+            }).collect(Collectors.joining(" "));
+
+            var director = movieDirectorRepository.findByMovieId(movieId).stream().map((movieDirectorEntity) -> {
+                return directorRepository.findById(movieDirectorEntity.getDirectorId()).orElseThrow().getName();
+            }).collect(Collectors.joining("/"));
+
+            var starring = movieStarringRepository.findByMovieId(movieId).stream().map((movieStarringEntity) -> {
+                return starringRepository.findById(movieStarringEntity.getStarringId()).orElseThrow().getName();
+            }).collect(Collectors.joining("/"));
+
+            var cast = director + "/" + starring;
+
+            var tag = movieTagRepository.findByMovieId(movieId).stream().map((movieTagEntity) -> {
+                return tagRepository.findById(movieTagEntity.getTagId()).orElseThrow().getName();
+            }).collect(Collectors.joining(" "));
+
+            movieView.setCountry(country);
+            movieView.setCast(cast);
+            movieView.setTag(tag);
+            return movieView;
+        }).toList();
+        return new PageImpl<>(movieViewList, pageable, movieViewList.size());
+    }
+
     public MovieView readById(long id) {
         return transform(movieRepository.findById(id).orElseThrow());
     }

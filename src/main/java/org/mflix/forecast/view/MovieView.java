@@ -19,6 +19,7 @@ public class MovieView {
     private long id;
     @NotBlank
     private String chineseName;
+    private String cast;
     @NotEmpty
     @JsonProperty("countries")
     private Set<CountryView> countryViewSet;
@@ -29,6 +30,8 @@ public class MovieView {
     private String director;
     @NotBlank
     private String introduction;
+    private Date launchDate;
+    private String launchType;
     @NotEmpty
     @JsonProperty("launches")
     private Set<LaunchView> launchViewSet;
@@ -71,5 +74,30 @@ public class MovieView {
         this.starring = starring;
         this.tag = tag;
         this.type = type;
+    }
+
+    public MovieView(long id, @NotBlank String chineseName, String cast, String country,
+            @NotEmpty Set<LaunchView> launchViewSet, @NotBlank String originName, @NotBlank String posterUrl,
+            @NotNull Double score, String tag) {
+        this.id = id;
+        this.chineseName = chineseName;
+        this.cast = cast;
+        this.country = country;
+        this.launchViewSet = launchViewSet;
+        this.originName = originName;
+        this.posterUrl = posterUrl;
+        this.score = score;
+        this.tag = tag;
+    }
+
+    public MovieView(long id, @NotBlank String chineseName, Date launchDate, String launchType,
+            @NotBlank String originName, @NotBlank String posterUrl, @NotNull Double score) {
+        this.id = id;
+        this.chineseName = chineseName;
+        this.launchDate = launchDate;
+        this.launchType = launchType;
+        this.originName = originName;
+        this.posterUrl = posterUrl;
+        this.score = score;
     }
 }
