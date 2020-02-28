@@ -116,7 +116,6 @@ public class MovieService {
     public Page<MovieView> readAllSortByLaunchDateWithPage(Pageable pageable) {
         var movieViewList = launchRepository.findAll(pageable).map((launchEntity) -> {
             var movieEnity = movieRepository.findById(launchEntity.getMovieId()).orElseThrow();
-            System.out.println();
             return new MovieView(movieEnity.getId(), movieEnity.getChineseName(), launchEntity.getDate(),
                     launchEntity.getType(), movieEnity.getOriginName(), movieEnity.getPosterUrl(),
                     movieEnity.getScore());

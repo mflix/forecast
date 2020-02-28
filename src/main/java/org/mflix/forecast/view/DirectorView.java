@@ -14,6 +14,10 @@ public class DirectorView {
     public DirectorView() {
     }
 
+    public DirectorView(String name) {
+        this.name = name;
+    }
+
     public DirectorView(long id, String name) {
         this.id = id;
         this.name = name;

@@ -14,6 +14,10 @@ public class StarringView {
     public StarringView() {
     }
 
+    public StarringView(String name) {
+        this.name = name;
+    }
+
     public StarringView(long id, String name) {
         this.id = id;
         this.name = name;

@@ -14,6 +14,10 @@ public class CountryView {
     public CountryView() {
     }
 
+    public CountryView(String name) {
+        this.name = name;
+    }
+
     public CountryView(long id, String name) {
         this.id = id;
         this.name = name;

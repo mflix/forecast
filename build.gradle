@@ -21,6 +21,8 @@ repositories {
 }
 
 dependencies {
+	implementation 'org.jsoup:jsoup:1.12.2'
+
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-mail'
 	implementation 'org.springframework.boot:spring-boot-starter-security'
