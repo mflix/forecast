@@ -1,9 +1,8 @@
 package org.mflix.forecast.entity;
 
 import java.util.Date;
-import java.util.Set;
 
-import javax.persistence.ElementCollection;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -16,16 +15,35 @@ public class MovieEntity {
     @Id
     @GeneratedValue
     private long id;
-    private String name;
-    private String postersUrl;
+    // 中文名称
+    @Column(unique = true)
+    private String chineseName;
+    // 简介
+    @Column(length = 1023)
+    private String introduction;
+    // 英文名称
+    @Column(unique = true)
+    private String originName;
+    // 海报链接
+    private String posterUrl;
+    // 上映日期
     private Date releaseDate;
+    // 评分
+    private Double score;
+    // 类型
     private String type;
-    private String Introduction;
-    @ElementCollection
-    private Set<String> tags;
-    private String director;
-    private String starring;
-    @ElementCollection
-    private Set<Date> launchDate;
-    private String score;
+
+    public MovieEntity() {
+    }
+
+    public MovieEntity(String chineseName, String introduction, String originName, String posterUrl, Date releaseDate,
+            Double score, String type) {
+        this.chineseName = chineseName;
+        this.introduction = introduction;
+        this.originName = originName;
+        this.posterUrl = posterUrl;
+        this.releaseDate = releaseDate;
+        this.score = score;
+        this.type = type;
+    }
 }

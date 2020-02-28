@@ -1,18 +1,21 @@
 // package org.mflix.forecast.controller;
 
-// import org.springframework.core.io.FileSystemResource;
-// import org.springframework.web.bind.annotation.GetMapping;
-// import org.springframework.web.bind.annotation.PathVariable;
+// import org.mflix.forecast.component.ResponseComponent;
+// import org.mflix.forecast.service.FileService;
+// import org.springframework.beans.factory.annotation.Autowired;
 // import org.springframework.web.bind.annotation.RequestMapping;
 // import org.springframework.web.bind.annotation.RestController;
 
 // @RestController
-// @RequestMapping("/file")
+// @RequestMapping("/")
 // public class FileController {
+// private final ResponseComponent responseComponent;
+// private final FileService fileService;
 
-// private
-// @GetMapping("/test/{filename}")
-// public FileSystemResource get(@PathVariable String filename) {
-
+// @Autowired
+// public FileController(ResponseComponent responseComponent, FileService
+// fileService) {
+// this.responseComponent = responseComponent;
+// this.fileService = fileService;
 // }
 // }
