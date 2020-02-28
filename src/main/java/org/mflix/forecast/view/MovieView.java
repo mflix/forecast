@@ -28,7 +28,6 @@ public class MovieView {
     @NotEmpty
     @JsonProperty("launches")
     private Set<LaunchView> launchViewSet;
-    private Set<String> launchSet;
     @NotBlank
     private String originName;
     @NotBlank
@@ -52,13 +51,14 @@ public class MovieView {
     }
 
     public MovieView(long id, @NotBlank String chineseName, Set<String> directorSet, @NotBlank String introduction,
-            Set<String> launchSet, @NotBlank String originName, @NotBlank String posterUrl, @NotNull Date releaseDate,
-            @NotNull Double score, Set<String> starringSet, Set<String> tagSet, @NotBlank String type) {
+            @NotEmpty Set<LaunchView> launchViewSet, @NotBlank String originName, @NotBlank String posterUrl,
+            @NotNull Date releaseDate, @NotNull Double score, Set<String> starringSet, Set<String> tagSet,
+            @NotBlank String type) {
         this.id = id;
         this.chineseName = chineseName;
         this.directorSet = directorSet;
         this.introduction = introduction;
-        this.launchSet = launchSet;
+        this.launchViewSet = launchViewSet;
         this.originName = originName;
         this.posterUrl = posterUrl;
         this.releaseDate = releaseDate;

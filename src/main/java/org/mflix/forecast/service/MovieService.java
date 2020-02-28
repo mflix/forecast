@@ -19,6 +19,7 @@ import org.mflix.forecast.repository.MovieStarringRepository;
 import org.mflix.forecast.repository.MovieTagRepository;
 import org.mflix.forecast.repository.StarringRepository;
 import org.mflix.forecast.repository.TagRepository;
+import org.mflix.forecast.view.LaunchView;
 import org.mflix.forecast.view.MovieView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -117,10 +118,8 @@ public class MovieService {
             return directorRepository.findById(movieDirectorEntity.getDirectorId()).orElseThrow().getName();
         }).collect(Collectors.toSet());
 
-        var launchSet = launchRepository.findByMovieId(movieId).stream().map((launchEntity) -> {
-            // return new LaunchView(launchEntity.getId(), launchEntity.getType(),
-            // launchEntity.getDate());
-            return launchEntity.getType() + " " + launchEntity.getDate();
+        var launchViewSet = launchRepository.findByMovieId(movieId).stream().map((launchEntity) -> {
+            return new LaunchView(launchEntity.getId(), launchEntity.getType(), launchEntity.getDate());
         }).collect(Collectors.toSet());
 
         var starringSet = movieStarringRepository.findByMovieId(movieId).stream().map((movieStarringEntity) -> {
@@ -137,8 +136,8 @@ public class MovieService {
             return tagRepository.findById(movieTagEntity.getTagId()).orElseThrow().getName();
         }).collect(Collectors.toSet());
 
-        return new MovieView(movieId, movieEnity.getChineseName(), directorSet, movieEnity.getIntroduction(), launchSet,
-                movieEnity.getOriginName(), movieEnity.getPosterUrl(), movieEnity.getReleaseDate(),
+        return new MovieView(movieId, movieEnity.getChineseName(), directorSet, movieEnity.getIntroduction(),
+                launchViewSet, movieEnity.getOriginName(), movieEnity.getPosterUrl(), movieEnity.getReleaseDate(),
                 movieEnity.getScore(), starringSet, tagSet, movieEnity.getType());
 
     }
