@@ -116,7 +116,9 @@ public class DoubanComponent {
 
     private void getScore(Element content, MovieView movieView) {
         var score = content.getElementById("interest_sectl").getElementsByTag("strong").get(0).text();
-        movieView.setScore(Double.parseDouble(score));
+        if (!score.equals("")) {
+            movieView.setScore(Double.parseDouble(score));
+        }
     }
 
     private Element getContent(String url) {
