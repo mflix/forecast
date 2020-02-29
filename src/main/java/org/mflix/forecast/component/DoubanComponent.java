@@ -21,40 +21,68 @@ public class DoubanComponent {
     public void extract(String url, MovieView movieView) {
         var content = getContent(url);
         var info = content.getElementById("info").text();
-        int directorsIndex = info.indexOf("导演:", 0);
-        int scriptwriterIndex = info.indexOf("编剧:", directorsIndex);
-        getDirectors(info, directorsIndex, scriptwriterIndex, movieView);
-        int starringsIndex = info.indexOf("主演:", scriptwriterIndex);
-        int tagsIndex = info.indexOf("类型:", starringsIndex);
-        getStarrings(info, starringsIndex, tagsIndex, movieView);
-        int officialWebsiteIndex = info.indexOf("官方网站:", tagsIndex);
-        int CountriesIndex = info.indexOf("制片国家/地区:", officialWebsiteIndex);
-        getTags(info, tagsIndex, officialWebsiteIndex, CountriesIndex, movieView);
-        int languageIndex = info.indexOf("语言:", CountriesIndex);
-        getCountries(info, CountriesIndex, languageIndex, movieView);
-        int releaseDateIndex = info.indexOf("上映日期:", languageIndex);
-        int lengthIndex = info.indexOf("片长:", releaseDateIndex);
-        getReleaseDate(info, releaseDateIndex, lengthIndex, movieView);
-        getIntroduction(content, movieView);
-        getName(content, movieView);
-        getPosterUrl(content, movieView);
-        getScore(content, movieView);
+        int directorsIndex = info.indexOf("导演:");
+        System.out.println(directorsIndex);
+        int scriptwriterIndex = info.indexOf("编剧:");
+        System.out.println(scriptwriterIndex);
+        // getDirectors(info, directorsIndex, scriptwriterIndex, movieView);
+        int starringsIndex = info.indexOf("主演:");
+        System.out.println(starringsIndex);
+        int tagsIndex = info.indexOf("类型:");
+        // getStarrings(info, starringsIndex, tagsIndex, movieView);
+        int officialWebsiteIndex = info.indexOf("官方网站:");
+        int countriesIndex = info.indexOf("制片国家/地区:");
+        // getTags(info, tagsIndex, officialWebsiteIndex, CountriesIndex, movieView);
+        int languageIndex = info.indexOf("语言:");
+        // getCountries(info, CountriesIndex, languageIndex, movieView);
+        int releaseDateIndex = info.indexOf("上映日期:");
+        int lengthIndex = info.indexOf("片长:");
+        // getReleaseDate(info, releaseDateIndex, lengthIndex, movieView);
+
+        if (directorsIndex != -1 && scriptwriterIndex != -1) {
+            String directors = info.substring(directorsIndex, scriptwriterIndex);
+            System.out.println(directors);
+            scriptwriterIndex -= directors.length();
+            info = info.substring(scriptwriterIndex);
+        }
+        if (scriptwriterIndex != -1 && starringsIndex != -1) {
+            String scriptwriters = info.substring(scriptwriterIndex, starringsIndex);
+            System.out.println(scriptwriters);
+            starringsIndex -= scriptwriters.length();
+            info = info.substring(starringsIndex);
+        }
+        if (starringsIndex != -1 && tagsIndex != -1) {
+            String starrings = info.substring(starringsIndex, tagsIndex);
+            tagsIndex -= starrings.length();
+            System.out.println(starrings);
+            info = info.substring(tagsIndex);
+        }
+
+        // getIntroduction(content, movieView);
+        // getName(content, movieView);
+        // getPosterUrl(content, movieView);
+        // getScore(content, movieView);
     }
 
     private void getDirectors(String info, int directorsIndex, int scriptwriterIndex, MovieView movieView) {
-        var directors = info.substring(directorsIndex, scriptwriterIndex).trim().split(": ");
-        var directorViewSet = Arrays.asList(directors[1].split(" / ")).stream().map((director) -> {
-            return new DirectorView(director);
-        }).collect(Collectors.toSet());
-        movieView.setDirectorViewSet(directorViewSet);
+        if (directorsIndex != -1 && scriptwriterIndex != -1) {
+            var directors = info.substring(directorsIndex, scriptwriterIndex).trim().split(": ");
+            System.out.println(directors);
+            var directorViewSet = Arrays.asList(directors[1].split(" / ")).stream().map((director) -> {
+                return new DirectorView(director);
+            }).collect(Collectors.toSet());
+            movieView.setDirectorViewSet(directorViewSet);
+        }
     }
 
-    private void getStarrings(String info, int starringsIndex, int tagssIndex, MovieView movieView) {
-        var starrings = info.substring(starringsIndex, tagssIndex).trim().split(": ");
-        var starringViewSet = Arrays.asList(starrings[1].split(" / ")).stream().map((starring) -> {
-            return new StarringView(starring);
-        }).collect(Collectors.toSet());
-        movieView.setStarringViewSet(starringViewSet);
+    private void getStarrings(String info, int starringsIndex, int tagsIndex, MovieView movieView) {
+        if (starringsIndex != -1 && tagsIndex != -1) {
+            var starrings = info.substring(starringsIndex, tagsIndex).trim().split(": ");
+            var starringViewSet = Arrays.asList(starrings[1].split(" / ")).stream().map((starring) -> {
+                return new StarringView(starring);
+            }).collect(Collectors.toSet());
+            movieView.setStarringViewSet(starringViewSet);
+        }
     }
 
     private void getTags(String info, int tagsIndex, int officialWebsiteIndex, int countriesIndex,

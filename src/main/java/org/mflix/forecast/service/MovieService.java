@@ -68,36 +68,46 @@ public class MovieService {
     public MovieView createByBody(MovieView movieView) {
         doubanComponent.extract(movieView.getDoubanUrl(), movieView);
 
-        MovieEntity movieEntity = new MovieEntity(movieView.getChineseName(), movieView.getIntroduction(),
-                movieView.getOriginName(), movieView.getPosterUrl(), movieView.getReleaseDate(), movieView.getScore(),
-                movieView.getType());
-        long movieId = movieRepository.save(movieEntity).getId();
+        // MovieEntity movieEntity = new MovieEntity(movieView.getChineseName(),
+        // movieView.getIntroduction(),
+        // movieView.getOriginName(), movieView.getPosterUrl(),
+        // movieView.getReleaseDate(), movieView.getScore(),
+        // movieView.getType());
+        // long movieId = movieRepository.save(movieEntity).getId();
 
-        movieView.getCountryViewSet().stream().forEachOrdered((countryView) -> {
-            movieCountryRepository.save(new MovieCountryEntity(movieId, countryRepository.save(countryRepository
-                    .findByName(countryView.getName()).orElse(new CountryEntity(countryView.getName()))).getId()));
-        });
+        // movieView.getCountryViewSet().stream().forEachOrdered((countryView) -> {
+        // movieCountryRepository.save(new MovieCountryEntity(movieId,
+        // countryRepository.save(countryRepository
+        // .findByName(countryView.getName()).orElse(new
+        // CountryEntity(countryView.getName()))).getId()));
+        // });
 
-        movieView.getDirectorViewSet().stream().forEachOrdered((directorView) -> {
-            movieDirectorRepository.save(new MovieDirectorEntity(movieId, directorRepository.save(directorRepository
-                    .findByName(directorView.getName()).orElse(new DirectorEntity(directorView.getName()))).getId()));
-        });
+        // movieView.getDirectorViewSet().stream().forEachOrdered((directorView) -> {
+        // movieDirectorRepository.save(new MovieDirectorEntity(movieId,
+        // directorRepository.save(directorRepository
+        // .findByName(directorView.getName()).orElse(new
+        // DirectorEntity(directorView.getName()))).getId()));
+        // });
 
-        movieView.getLaunchViewSet().stream().forEachOrdered((launchView) -> {
-            launchRepository.save(new LaunchEntity(launchView.getType(), launchView.getDate(), movieId));
-        });
+        // movieView.getLaunchViewSet().stream().forEachOrdered((launchView) -> {
+        // launchRepository.save(new LaunchEntity(launchView.getType(),
+        // launchView.getDate(), movieId));
+        // });
 
-        movieView.getStarringViewSet().stream().forEachOrdered((starringView) -> {
-            movieStarringRepository.save(new MovieStarringEntity(movieId, starringRepository.save(starringRepository
-                    .findByName(starringView.getName()).orElse(new StarringEntity(starringView.getName()))).getId()));
-        });
+        // movieView.getStarringViewSet().stream().forEachOrdered((starringView) -> {
+        // movieStarringRepository.save(new MovieStarringEntity(movieId,
+        // starringRepository.save(starringRepository
+        // .findByName(starringView.getName()).orElse(new
+        // StarringEntity(starringView.getName()))).getId()));
+        // });
 
-        movieView.getTagViewSet().stream().forEachOrdered((tagView) -> {
-            movieTagRepository.save(new MovieTagEntity(movieId,
-                    tagRepository
-                            .save(tagRepository.findByName(tagView.getName()).orElse(new TagEntity(tagView.getName())))
-                            .getId()));
-        });
+        // movieView.getTagViewSet().stream().forEachOrdered((tagView) -> {
+        // movieTagRepository.save(new MovieTagEntity(movieId,
+        // tagRepository
+        // .save(tagRepository.findByName(tagView.getName()).orElse(new
+        // TagEntity(tagView.getName())))
+        // .getId()));
+        // });
 
         return movieView;
     }
@@ -107,8 +117,9 @@ public class MovieService {
     }
 
     public Page<MovieView> readAllWithPage(Pageable pageable) {
-        var movieViewList = transform(movieRepository.findAll(pageable).toList());
-        return new PageImpl<>(movieViewList, pageable, movieViewList.size());
+        var movieEntityPage = movieRepository.findAll(pageable);
+        var movieViewList = transform(movieEntityPage.toList());
+        return new PageImpl<>(movieViewList, pageable, movieEntityPage.getTotalElements());
     }
 
     public Page<MovieView> readAllSortByLaunchDateWithPage(Pageable pageable, String type) {
@@ -149,7 +160,7 @@ public class MovieService {
             movieView.setTag(tag);
             return movieView;
         }).toList();
-        return new PageImpl<>(movieViewList, pageable, movieViewList.size());
+        return new PageImpl<>(movieViewList, pageable, launchEntityPage.getTotalElements());
     }
 
     public MovieView readById(long id) {
