@@ -124,7 +124,7 @@ public class MovieService {
 
     public Page<MovieView> readAllSortByLaunchDateWithPage(Pageable pageable, String type) {
         Page<LaunchEntity> launchEntityPage;
-        if (type.equals("")) {
+        if (type == null) {
             launchEntityPage = launchRepository.findAll(pageable);
         } else {
             launchEntityPage = launchRepository.findAllByType(type, pageable);

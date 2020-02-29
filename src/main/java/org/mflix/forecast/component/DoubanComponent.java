@@ -21,43 +21,21 @@ public class DoubanComponent {
     public void extract(String url, MovieView movieView) {
         var content = getContent(url);
         var info = content.getElementById("info").text();
+        System.out.println(info);
         int directorsIndex = info.indexOf("导演:");
-        System.out.println(directorsIndex);
+
         int scriptwriterIndex = info.indexOf("编剧:");
-        System.out.println(scriptwriterIndex);
-        // getDirectors(info, directorsIndex, scriptwriterIndex, movieView);
+
         int starringsIndex = info.indexOf("主演:");
-        System.out.println(starringsIndex);
+
         int tagsIndex = info.indexOf("类型:");
-        // getStarrings(info, starringsIndex, tagsIndex, movieView);
+
         int officialWebsiteIndex = info.indexOf("官方网站:");
+
         int countriesIndex = info.indexOf("制片国家/地区:");
-        // getTags(info, tagsIndex, officialWebsiteIndex, CountriesIndex, movieView);
         int languageIndex = info.indexOf("语言:");
-        // getCountries(info, CountriesIndex, languageIndex, movieView);
         int releaseDateIndex = info.indexOf("上映日期:");
         int lengthIndex = info.indexOf("片长:");
-        // getReleaseDate(info, releaseDateIndex, lengthIndex, movieView);
-
-        if (directorsIndex != -1 && scriptwriterIndex != -1) {
-            String directors = info.substring(directorsIndex, scriptwriterIndex);
-            System.out.println(directors);
-            scriptwriterIndex -= directors.length();
-            info = info.substring(scriptwriterIndex);
-        }
-        if (scriptwriterIndex != -1 && starringsIndex != -1) {
-            String scriptwriters = info.substring(scriptwriterIndex, starringsIndex);
-            System.out.println(scriptwriters);
-            starringsIndex -= scriptwriters.length();
-            info = info.substring(starringsIndex);
-        }
-        if (starringsIndex != -1 && tagsIndex != -1) {
-            String starrings = info.substring(starringsIndex, tagsIndex);
-            tagsIndex -= starrings.length();
-            System.out.println(starrings);
-            info = info.substring(tagsIndex);
-        }
-
         // getIntroduction(content, movieView);
         // getName(content, movieView);
         // getPosterUrl(content, movieView);
