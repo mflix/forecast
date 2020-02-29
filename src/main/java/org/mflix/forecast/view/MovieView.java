@@ -16,43 +16,33 @@ import lombok.Data;
 @Data
 @JsonInclude(Include.NON_EMPTY)
 public class MovieView {
-    private long id;
-    @NotBlank
+    private String doubanUrl;
     private String chineseName;
-    private String cast;
-    @NotEmpty
     @JsonProperty("countries")
     private Set<CountryView> countryViewSet;
-    private String country;
-    @NotEmpty
     @JsonProperty("directors")
     private Set<DirectorView> directorViewSet;
-    private String director;
-    @NotBlank
     private String introduction;
-    private Date launchDate;
-    private String launchType;
-    @NotEmpty
     @JsonProperty("launches")
     private Set<LaunchView> launchViewSet;
-    @NotBlank
     private String originName;
-    @NotBlank
     private String posterUrl;
-    @NotNull
     private Date releaseDate;
-    @NotNull
     private Double score;
-    @NotEmpty
     @JsonProperty("starrings")
     private Set<StarringView> starringViewSet;
-    private String starring;
-    @NotEmpty
     @JsonProperty("tags")
     private Set<TagView> tagViewSet;
-    private String tag;
-    @NotBlank
     private String type;
+
+    private long id;
+    private String cast;
+    private String country;
+    private String director;
+    private Date launchDate;
+    private String launchType;
+    private String starring;
+    private String tag;
 
     public MovieView() {
     }

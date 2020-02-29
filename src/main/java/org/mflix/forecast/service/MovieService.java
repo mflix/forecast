@@ -3,6 +3,7 @@ package org.mflix.forecast.service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.mflix.forecast.component.DoubanComponent;
 import org.mflix.forecast.entity.CountryEntity;
 import org.mflix.forecast.entity.DirectorEntity;
 import org.mflix.forecast.entity.LaunchEntity;
@@ -33,6 +34,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class MovieService {
+    private final DoubanComponent doubanComponent;
     private final MovieRepository movieRepository;
     private final CountryRepository countryRepository;
     private final DirectorRepository directorRepository;
@@ -45,11 +47,12 @@ public class MovieService {
     private final MovieTagRepository movieTagRepository;
 
     @Autowired
-    public MovieService(MovieRepository movieRepository, CountryRepository countryRepository,
-            DirectorRepository directorRepository, LaunchRepository launchRepository,
-            StarringRepository starringRepository, TagRepository tagRepository,
+    public MovieService(DoubanComponent doubanComponent, MovieRepository movieRepository,
+            CountryRepository countryRepository, DirectorRepository directorRepository,
+            LaunchRepository launchRepository, StarringRepository starringRepository, TagRepository tagRepository,
             MovieCountryRepository movieCountryRepository, MovieDirectorRepository movieDirectorRepository,
             MovieStarringRepository movieStarringRepository, MovieTagRepository movieTagRepository) {
+        this.doubanComponent = doubanComponent;
         this.movieRepository = movieRepository;
         this.countryRepository = countryRepository;
         this.directorRepository = directorRepository;
@@ -63,16 +66,11 @@ public class MovieService {
     }
 
     public MovieView createByBody(MovieView movieView) {
-        var chineseName = movieView.getChineseName();
-        var introduction = movieView.getIntroduction();
-        var originName = movieView.getOriginName();
-        var posterUrl = movieView.getPosterUrl();
-        var releaseDate = movieView.getReleaseDate();
-        var score = movieView.getScore();
-        var type = movieView.getType();
+        doubanComponent.extract(movieView.getDoubanUrl(), movieView);
 
-        MovieEntity movieEntity = new MovieEntity(chineseName, introduction, originName, posterUrl, releaseDate, score,
-                type);
+        MovieEntity movieEntity = new MovieEntity(movieView.getChineseName(), movieView.getIntroduction(),
+                movieView.getOriginName(), movieView.getPosterUrl(), movieView.getReleaseDate(), movieView.getScore(),
+                movieView.getType());
         long movieId = movieRepository.save(movieEntity).getId();
 
         movieView.getCountryViewSet().stream().forEachOrdered((countryView) -> {
@@ -113,8 +111,14 @@ public class MovieService {
         return new PageImpl<>(movieViewList, pageable, movieViewList.size());
     }
 
-    public Page<MovieView> readAllSortByLaunchDateWithPage(Pageable pageable) {
-        var movieViewList = launchRepository.findAll(pageable).map((launchEntity) -> {
+    public Page<MovieView> readAllSortByLaunchDateWithPage(Pageable pageable, String type) {
+        Page<LaunchEntity> launchEntityPage;
+        if (type.equals("")) {
+            launchEntityPage = launchRepository.findAll(pageable);
+        } else {
+            launchEntityPage = launchRepository.findAllByType(type, pageable);
+        }
+        var movieViewList = launchEntityPage.map((launchEntity) -> {
             var movieEnity = movieRepository.findById(launchEntity.getMovieId()).orElseThrow();
             return new MovieView(movieEnity.getId(), movieEnity.getChineseName(), launchEntity.getDate(),
                     launchEntity.getType(), movieEnity.getOriginName(), movieEnity.getPosterUrl(),

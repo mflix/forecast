@@ -41,7 +41,7 @@ public class DoubanComponent {
         getScore(content, movieView);
     }
 
-    public void getDirectors(String info, int directorsIndex, int scriptwriterIndex, MovieView movieView) {
+    private void getDirectors(String info, int directorsIndex, int scriptwriterIndex, MovieView movieView) {
         var directors = info.substring(directorsIndex, scriptwriterIndex).trim().split(": ");
         var directorViewSet = Arrays.asList(directors[1].split(" / ")).stream().map((director) -> {
             return new DirectorView(director);
@@ -49,7 +49,7 @@ public class DoubanComponent {
         movieView.setDirectorViewSet(directorViewSet);
     }
 
-    public void getStarrings(String info, int starringsIndex, int tagssIndex, MovieView movieView) {
+    private void getStarrings(String info, int starringsIndex, int tagssIndex, MovieView movieView) {
         var starrings = info.substring(starringsIndex, tagssIndex).trim().split(": ");
         var starringViewSet = Arrays.asList(starrings[1].split(" / ")).stream().map((starring) -> {
             return new StarringView(starring);
@@ -57,7 +57,8 @@ public class DoubanComponent {
         movieView.setStarringViewSet(starringViewSet);
     }
 
-    public void getTags(String info, int tagsIndex, int officialWebsiteIndex, int countriesIndex, MovieView movieView) {
+    private void getTags(String info, int tagsIndex, int officialWebsiteIndex, int countriesIndex,
+            MovieView movieView) {
         String[] tags = {};
         if (officialWebsiteIndex == -1) {
             tags = info.substring(tagsIndex, countriesIndex).trim().split(": ");
@@ -70,7 +71,7 @@ public class DoubanComponent {
         movieView.setTagViewSet(tagsViewSet);
     }
 
-    public void getCountries(String info, int countriesIndex, int languageIndex, MovieView movieView) {
+    private void getCountries(String info, int countriesIndex, int languageIndex, MovieView movieView) {
         var countries = info.substring(countriesIndex, languageIndex).trim().split(": ");
         var countryViewSet = Arrays.asList(countries[1].split(" / ")).stream().map((country) -> {
             return new CountryView(country);
@@ -78,7 +79,7 @@ public class DoubanComponent {
         movieView.setCountryViewSet(countryViewSet);
     }
 
-    public void getReleaseDate(String info, int releaseDateIndex, int lengthIndex, MovieView movieView) {
+    private void getReleaseDate(String info, int releaseDateIndex, int lengthIndex, MovieView movieView) {
         var releaseDates = info.substring(releaseDateIndex, lengthIndex).trim().split(": ");
         var date = Arrays.asList(releaseDates[1].split(" / ")).stream().map((releaseDate) -> {
             try {
@@ -98,13 +99,14 @@ public class DoubanComponent {
     }
 
     private void getName(Element content, MovieView movieView) {
-        var name = content.getElementsByTag("h1").get(0).getElementsByTag("span").get(0).text().split(" ");
-        if (name.length == 1) {
-            movieView.setChineseName(name[0]);
-            movieView.setOriginName(name[0]);
+        var name = content.getElementsByTag("h1").get(0).getElementsByTag("span").get(0).text();
+        var chineseNameEndIndex = name.indexOf(" ");
+        if (chineseNameEndIndex == -1) {
+            movieView.setChineseName(name);
+            movieView.setOriginName(name);
         } else {
-            movieView.setChineseName(name[0]);
-            movieView.setOriginName(name[1]);
+            movieView.setChineseName(name.substring(0, chineseNameEndIndex));
+            movieView.setOriginName(name.substring(chineseNameEndIndex));
         }
     }
 
