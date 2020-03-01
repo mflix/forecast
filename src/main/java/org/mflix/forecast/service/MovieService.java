@@ -125,7 +125,7 @@ public class MovieService {
                     launchEntity.getType(), movieEntity.getOriginName(), movieEntity.getPosterUrl(),
                     movieEntity.getScore(), movieEntity.getType());
         }).filter((movieView) -> {
-            if ("全部".equals(launchType)) {
+            if (launchType == null || "全部".equals(launchType)) {
                 return true;
             }
             return movieType.equals(movieView.getType());
