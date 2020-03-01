@@ -16,13 +16,11 @@ public class MovieEntity {
     @GeneratedValue
     private long id;
     // 中文名称
-    @Column(unique = true)
     private String chineseName;
     // 简介
     @Column(length = 1023)
     private String introduction;
     // 英文名称
-    @Column(unique = true)
     private String originName;
     // 海报链接
     private String posterUrl;
