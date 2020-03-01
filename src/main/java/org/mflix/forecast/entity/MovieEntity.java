@@ -18,7 +18,7 @@ public class MovieEntity {
     // 中文名称
     private String chineseName;
     // 简介
-    @Column(length = 1023)
+    @Column(length = 2048)
     private String introduction;
     // 英文名称
     private String originName;
