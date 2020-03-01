@@ -59,8 +59,8 @@ public class MovieController {
 
     @GetMapping("/launch/page/")
     public ResponseEntity<ResponseView> getAllByLaunchWithPage(Pageable pageable,
-            @RequestParam(required = false) String type) {
-        var movieView = movieService.readAllSortByLaunchDateWithPage(pageable, type);
+            @RequestParam(required = false) String launchType, @RequestParam(required = false) String movieType) {
+        var movieView = movieService.readAllSortByLaunchDateWithPage(pageable, launchType, movieType);
         return responseComponent.generate(StatusEnumeration.S0, HttpStatus.OK, movieView);
     }
 }

@@ -5,15 +5,11 @@ import java.util.Set;
 
 import javax.validation.constraints.NotBlank;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
-
 import org.springframework.security.core.GrantedAuthority;
 
 import lombok.Data;
 
 @Data
-@JsonInclude(Include.NON_EMPTY)
 public class UserView {
     private long id;
     private Set<GrantedAuthority> authorities;

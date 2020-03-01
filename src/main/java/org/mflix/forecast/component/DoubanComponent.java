@@ -4,6 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.jsoup.Jsoup;
@@ -21,80 +22,65 @@ public class DoubanComponent {
     public void extract(String url, MovieView movieView) {
         var content = getContent(url);
         var info = content.getElementById("info").text();
-        System.out.println(info);
-        int directorsIndex = info.indexOf("导演:");
-
-        int scriptwriterIndex = info.indexOf("编剧:");
-
-        int starringsIndex = info.indexOf("主演:");
-
-        int tagsIndex = info.indexOf("类型:");
-
-        int officialWebsiteIndex = info.indexOf("官方网站:");
-
-        int countriesIndex = info.indexOf("制片国家/地区:");
-        int languageIndex = info.indexOf("语言:");
-        int releaseDateIndex = info.indexOf("上映日期:");
-        int lengthIndex = info.indexOf("片长:");
-        // getIntroduction(content, movieView);
-        // getName(content, movieView);
-        // getPosterUrl(content, movieView);
-        // getScore(content, movieView);
+        var infoMatcher = Pattern.compile("(\\S*):(\\s\\S*\\s\\/|\\s\\S*\\s)*").matcher(info);
+        while (infoMatcher.find()) {
+            var infoString = infoMatcher.group().trim();
+            if (infoString.startsWith("导演")) {
+                getDirectors(infoString, movieView);
+            } else if (infoString.startsWith("主演")) {
+                getStarrings(infoString, movieView);
+            } else if (infoString.startsWith("类型")) {
+                getTags(infoString, movieView);
+            } else if (infoString.startsWith("制片国家/地区")) {
+                getCountries(infoString, movieView);
+            } else if (infoString.startsWith("上映日期")) {
+                getReleaseDate(infoString, movieView);
+            }
+        }
+        getIntroduction(content, movieView);
+        getName(content, movieView);
+        getPosterUrl(content, movieView);
+        getScore(content, movieView);
     }
 
-    private void getDirectors(String info, int directorsIndex, int scriptwriterIndex, MovieView movieView) {
-        if (directorsIndex != -1 && scriptwriterIndex != -1) {
-            var directors = info.substring(directorsIndex, scriptwriterIndex).trim().split(": ");
-            System.out.println(directors);
-            var directorViewSet = Arrays.asList(directors[1].split(" / ")).stream().map((director) -> {
-                return new DirectorView(director);
-            }).collect(Collectors.toSet());
-            movieView.setDirectorViewSet(directorViewSet);
-        }
+    private void getDirectors(String infoString, MovieView movieView) {
+        var directors = infoString.split(": ");
+        var directorViewSet = Arrays.asList(directors[1].split(" / ")).stream()
+                .map(director -> new DirectorView(director)).collect(Collectors.toSet());
+        movieView.setDirectorViewSet(directorViewSet);
     }
 
-    private void getStarrings(String info, int starringsIndex, int tagsIndex, MovieView movieView) {
-        if (starringsIndex != -1 && tagsIndex != -1) {
-            var starrings = info.substring(starringsIndex, tagsIndex).trim().split(": ");
-            var starringViewSet = Arrays.asList(starrings[1].split(" / ")).stream().map((starring) -> {
-                return new StarringView(starring);
-            }).collect(Collectors.toSet());
-            movieView.setStarringViewSet(starringViewSet);
-        }
+    private void getStarrings(String infoString, MovieView movieView) {
+        var starrings = infoString.split(": ");
+        var starringViewSet = Arrays.asList(starrings[1].split(" / ")).stream()
+                .map(starring -> new StarringView(starring)).collect(Collectors.toSet());
+        movieView.setStarringViewSet(starringViewSet);
     }
 
-    private void getTags(String info, int tagsIndex, int officialWebsiteIndex, int countriesIndex,
-            MovieView movieView) {
-        String[] tags = {};
-        if (officialWebsiteIndex == -1) {
-            tags = info.substring(tagsIndex, countriesIndex).trim().split(": ");
-        } else {
-            tags = info.substring(tagsIndex, officialWebsiteIndex).trim().split(": ");
-        }
-        var tagsViewSet = Arrays.asList(tags[1].split(" / ")).stream().map((tag) -> {
-            return new TagView(tag);
-        }).collect(Collectors.toSet());
+    private void getTags(String infoString, MovieView movieView) {
+        var tags = infoString.split(": ");
+        var tagsViewSet = Arrays.asList(tags[1].split(" / ")).stream().map(tag -> new TagView(tag))
+                .collect(Collectors.toSet());
         movieView.setTagViewSet(tagsViewSet);
     }
 
-    private void getCountries(String info, int countriesIndex, int languageIndex, MovieView movieView) {
-        var countries = info.substring(countriesIndex, languageIndex).trim().split(": ");
-        var countryViewSet = Arrays.asList(countries[1].split(" / ")).stream().map((country) -> {
-            return new CountryView(country);
-        }).collect(Collectors.toSet());
+    private void getCountries(String infoString, MovieView movieView) {
+        var countries = infoString.split(": ");
+        var countryViewSet = Arrays.asList(countries[1].split(" / ")).stream().map(country -> new CountryView(country))
+                .collect(Collectors.toSet());
         movieView.setCountryViewSet(countryViewSet);
     }
 
-    private void getReleaseDate(String info, int releaseDateIndex, int lengthIndex, MovieView movieView) {
-        var releaseDates = info.substring(releaseDateIndex, lengthIndex).trim().split(": ");
+    private void getReleaseDate(String infoString, MovieView movieView) {
+        var releaseDates = infoString.split(": ");
         var date = Arrays.asList(releaseDates[1].split(" / ")).stream().map((releaseDate) -> {
             try {
                 return new SimpleDateFormat("yyyy-MM-dd").parse(releaseDate);
             } catch (ParseException e) {
                 return new Date();
             }
-        }).min((date1, date2) -> {
-            return (int) (date1.getTime() - date2.getTime());
+        }).min((a, b) -> {
+            return (int) (a.getTime() - b.getTime());
         }).orElseThrow();
         movieView.setReleaseDate(date);
     }
@@ -106,13 +92,13 @@ public class DoubanComponent {
 
     private void getName(Element content, MovieView movieView) {
         var name = content.getElementsByTag("h1").get(0).getElementsByTag("span").get(0).text();
-        var chineseNameEndIndex = name.indexOf(" ");
-        if (chineseNameEndIndex == -1) {
-            movieView.setChineseName(name);
-            movieView.setOriginName(name);
-        } else {
-            movieView.setChineseName(name.substring(0, chineseNameEndIndex));
-            movieView.setOriginName(name.substring(chineseNameEndIndex));
+        var nameMatcher = Pattern.compile("^\\S*|\\s.*").matcher(name);
+        if (nameMatcher.find()) {
+            movieView.setChineseName(nameMatcher.group());
+
+        }
+        if (nameMatcher.find()) {
+            movieView.setOriginName(nameMatcher.group().trim());
         }
     }
 

@@ -7,14 +7,11 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 import lombok.Data;
 
 @Data
-@JsonInclude(Include.NON_EMPTY)
 public class MovieView {
     private String doubanUrl;
     private String chineseName;
@@ -81,7 +78,7 @@ public class MovieView {
     }
 
     public MovieView(long id, @NotBlank String chineseName, Date launchDate, String launchType,
-            @NotBlank String originName, @NotBlank String posterUrl, @NotNull Double score) {
+            @NotBlank String originName, @NotBlank String posterUrl, @NotNull Double score, String type) {
         this.id = id;
         this.chineseName = chineseName;
         this.launchDate = launchDate;
@@ -89,5 +86,6 @@ public class MovieView {
         this.originName = originName;
         this.posterUrl = posterUrl;
         this.score = score;
+        this.type = type;
     }
 }
