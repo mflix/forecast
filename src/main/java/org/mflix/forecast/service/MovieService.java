@@ -124,7 +124,12 @@ public class MovieService {
             return new MovieView(movieEntity.getId(), movieEntity.getChineseName(), launchEntity.getDate(),
                     launchEntity.getType(), movieEntity.getOriginName(), movieEntity.getPosterUrl(),
                     movieEntity.getScore(), movieEntity.getType());
-        }).filter(movieView -> movieType.equals(movieView.getType())).map((movieView) -> {
+        }).filter((movieView) -> {
+            if ("全部".equals(launchType)) {
+                return true;
+            }
+            return movieType.equals(movieView.getType());
+        }).map((movieView) -> {
             var movieId = movieView.getId();
 
             var country = movieCountryRepository.findByMovieId(movieId).stream().map((movieCountryEntity) -> {
