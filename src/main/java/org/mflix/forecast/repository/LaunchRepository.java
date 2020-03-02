@@ -12,5 +12,5 @@ import org.springframework.stereotype.Repository;
 public interface LaunchRepository extends JpaRepository<LaunchEntity, Long> {
     Set<LaunchEntity> findByMovieId(long movieId);
 
-    Page<LaunchEntity> findAllByType(String type, Pageable pageable);
+    Page<LaunchEntity> findAllByVersion(String version, Pageable pageable);
 }

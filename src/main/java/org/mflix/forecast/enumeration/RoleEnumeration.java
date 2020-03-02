@@ -4,7 +4,7 @@ import lombok.Getter;
 
 @Getter
 public enum RoleEnumeration {
-    USER("ROLE_USER"), ADMIN("ROLE_ADMIN"), GUEST("ROLE_GUEST");
+    USER("ROLE_USER"), UPLOADER("ROLE_UPLOADER"), ADMIN("ROLE_ADMIN");
 
     private String name;
 

@@ -10,20 +10,20 @@ import org.mflix.forecast.entity.LaunchEntity;
 import org.mflix.forecast.entity.MovieCountryEntity;
 import org.mflix.forecast.entity.MovieDirectorEntity;
 import org.mflix.forecast.entity.MovieEntity;
-import org.mflix.forecast.entity.MovieStarringEntity;
-import org.mflix.forecast.entity.MovieTagEntity;
-import org.mflix.forecast.entity.StarringEntity;
-import org.mflix.forecast.entity.TagEntity;
+import org.mflix.forecast.entity.MovieCastEntity;
+import org.mflix.forecast.entity.MovieGenreEntity;
+import org.mflix.forecast.entity.CastEntity;
+import org.mflix.forecast.entity.GenreEntity;
 import org.mflix.forecast.repository.CountryRepository;
 import org.mflix.forecast.repository.DirectorRepository;
 import org.mflix.forecast.repository.LaunchRepository;
 import org.mflix.forecast.repository.MovieCountryRepository;
 import org.mflix.forecast.repository.MovieDirectorRepository;
 import org.mflix.forecast.repository.MovieRepository;
-import org.mflix.forecast.repository.MovieStarringRepository;
-import org.mflix.forecast.repository.MovieTagRepository;
-import org.mflix.forecast.repository.StarringRepository;
-import org.mflix.forecast.repository.TagRepository;
+import org.mflix.forecast.repository.MovieCastRepository;
+import org.mflix.forecast.repository.MovieGenreRepository;
+import org.mflix.forecast.repository.CastRepository;
+import org.mflix.forecast.repository.GenreRepository;
 import org.mflix.forecast.view.LaunchView;
 import org.mflix.forecast.view.MovieView;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,71 +39,66 @@ public class MovieService {
     private final CountryRepository countryRepository;
     private final DirectorRepository directorRepository;
     private final LaunchRepository launchRepository;
-    private final StarringRepository starringRepository;
-    private final TagRepository tagRepository;
+    private final CastRepository castRepository;
+    private final GenreRepository genreRepository;
     private final MovieCountryRepository movieCountryRepository;
     private final MovieDirectorRepository movieDirectorRepository;
-    private final MovieStarringRepository movieStarringRepository;
-    private final MovieTagRepository movieTagRepository;
+    private final MovieCastRepository movieCastRepository;
+    private final MovieGenreRepository movieGenreRepository;
 
     @Autowired
     public MovieService(DoubanComponent doubanComponent, MovieRepository movieRepository,
             CountryRepository countryRepository, DirectorRepository directorRepository,
-            LaunchRepository launchRepository, StarringRepository starringRepository, TagRepository tagRepository,
+            LaunchRepository launchRepository, CastRepository castRepository, GenreRepository genreRepository,
             MovieCountryRepository movieCountryRepository, MovieDirectorRepository movieDirectorRepository,
-            MovieStarringRepository movieStarringRepository, MovieTagRepository movieTagRepository) {
+            MovieCastRepository movieCastRepository, MovieGenreRepository movieGenreRepository) {
         this.doubanComponent = doubanComponent;
         this.movieRepository = movieRepository;
         this.countryRepository = countryRepository;
         this.directorRepository = directorRepository;
         this.launchRepository = launchRepository;
-        this.starringRepository = starringRepository;
-        this.tagRepository = tagRepository;
+        this.castRepository = castRepository;
+        this.genreRepository = genreRepository;
         this.movieCountryRepository = movieCountryRepository;
         this.movieDirectorRepository = movieDirectorRepository;
-        this.movieStarringRepository = movieStarringRepository;
-        this.movieTagRepository = movieTagRepository;
+        this.movieCastRepository = movieCastRepository;
+        this.movieGenreRepository = movieGenreRepository;
     }
 
     public MovieView createByBody(MovieView movieView) {
-        doubanComponent.extract(movieView.getDoubanUrl(), movieView);
-
-        MovieEntity movieEntity = new MovieEntity(movieView.getChineseName(), movieView.getIntroduction(),
-                movieView.getOriginName(), movieView.getPosterUrl(), movieView.getReleaseDate(), movieView.getScore(),
-                movieView.getType());
+        doubanComponent.extract(movieView);
+        MovieEntity movieEntity = new MovieEntity(movieView.getImageUrl(), movieView.getOriginalTitle(),
+                movieView.getPubdate(), movieView.getRating(), movieView.getSubtype(), movieView.getSummary(),
+                movieView.getTitle());
         long movieId = movieRepository.save(movieEntity).getId();
-
+        movieView.getCastViewSet().stream().forEachOrdered((castView) -> {
+            movieCastRepository.save(new MovieCastEntity(movieId,
+                    castRepository.save(
+                            castRepository.findByName(castView.getName()).orElse(new CastEntity(castView.getName())))
+                            .getId()));
+        });
         movieView.getCountryViewSet().stream().forEachOrdered((countryView) -> {
             movieCountryRepository.save(new MovieCountryEntity(movieId, countryRepository.save(countryRepository
                     .findByName(countryView.getName()).orElse(new CountryEntity(countryView.getName()))).getId()));
         });
-
         movieView.getDirectorViewSet().stream().forEachOrdered((directorView) -> {
             movieDirectorRepository.save(new MovieDirectorEntity(movieId, directorRepository.save(directorRepository
                     .findByName(directorView.getName()).orElse(new DirectorEntity(directorView.getName()))).getId()));
         });
-
+        movieView.getGenreViewSet().stream().forEachOrdered((genreView) -> {
+            movieGenreRepository.save(new MovieGenreEntity(movieId, genreRepository
+                    .save(genreRepository.findByName(genreView.getName()).orElse(new GenreEntity(genreView.getName())))
+                    .getId()));
+        });
         movieView.getLaunchViewSet().stream().forEachOrdered((launchView) -> {
-            launchRepository.save(new LaunchEntity(launchView.getType(), launchView.getDate(), movieId));
+            launchRepository.save(new LaunchEntity(launchView.getVersion(), launchView.getDate(), movieId));
         });
-
-        movieView.getStarringViewSet().stream().forEachOrdered((starringView) -> {
-            movieStarringRepository.save(new MovieStarringEntity(movieId, starringRepository.save(starringRepository
-                    .findByName(starringView.getName()).orElse(new StarringEntity(starringView.getName()))).getId()));
+        movieView.getGenreViewSet().stream().forEachOrdered((genreView) -> {
+            movieGenreRepository.save(new MovieGenreEntity(movieId, genreRepository
+                    .save(genreRepository.findByName(genreView.getName()).orElse(new GenreEntity(genreView.getName())))
+                    .getId()));
         });
-
-        movieView.getTagViewSet().stream().forEachOrdered((tagView) -> {
-            movieTagRepository.save(new MovieTagEntity(movieId,
-                    tagRepository
-                            .save(tagRepository.findByName(tagView.getName()).orElse(new TagEntity(tagView.getName())))
-                            .getId()));
-        });
-
         return movieView;
-    }
-
-    public List<MovieView> readAll() {
-        return transform(movieRepository.findAll());
     }
 
     public Page<MovieView> readAllWithPage(Pageable pageable) {
@@ -112,47 +107,43 @@ public class MovieService {
         return new PageImpl<>(movieViewList, pageable, movieViewList.size());
     }
 
-    public Page<MovieView> readAllSortByLaunchDateWithPage(Pageable pageable, String launchType, String movieType) {
+    public Page<MovieView> readAllSortByLaunchDateWithPage(Pageable pageable, String version, String subtype) {
         Page<LaunchEntity> launchEntityPage;
-        if (launchType == null || "全部".equals(launchType)) {
+        if (version == null || "all".equals(version)) {
             launchEntityPage = launchRepository.findAll(pageable);
         } else {
-            launchEntityPage = launchRepository.findAllByType(launchType, pageable);
+            launchEntityPage = launchRepository.findAllByVersion(version, pageable);
         }
         var movieViewList = launchEntityPage.map((launchEntity) -> {
             var movieEntity = movieRepository.findById(launchEntity.getMovieId()).orElseThrow();
-            return new MovieView(movieEntity.getId(), movieEntity.getChineseName(), launchEntity.getDate(),
-                    launchEntity.getType(), movieEntity.getOriginName(), movieEntity.getPosterUrl(),
-                    movieEntity.getScore(), movieEntity.getType());
+            return new MovieView(movieEntity.getId(), movieEntity.getImageUrl(), movieEntity.getOriginalTitle(),
+                    movieEntity.getRating(), movieEntity.getSubtype(), movieEntity.getTitle(), launchEntity.getDate(),
+                    launchEntity.getVersion());
         }).filter((movieView) -> {
-            if (movieType == null || "全部".equals(movieType)) {
+            if (subtype == null || "all".equals(subtype)) {
                 return true;
             }
-            return movieType.equals(movieView.getType());
+            return subtype.equals(movieView.getSubtype());
         }).map((movieView) -> {
             var movieId = movieView.getId();
 
+            var cast = movieCastRepository.findByMovieId(movieId).stream().map((movieCastEntity) -> {
+                return castRepository.findById(movieCastEntity.getCastId()).orElseThrow().getName();
+            }).collect(Collectors.joining("/"));
             var country = movieCountryRepository.findByMovieId(movieId).stream().map((movieCountryEntity) -> {
                 return countryRepository.findById(movieCountryEntity.getCountryId()).orElseThrow().getName();
             }).collect(Collectors.joining(" "));
-
             var director = movieDirectorRepository.findByMovieId(movieId).stream().map((movieDirectorEntity) -> {
                 return directorRepository.findById(movieDirectorEntity.getDirectorId()).orElseThrow().getName();
             }).collect(Collectors.joining("/"));
-
-            var starring = movieStarringRepository.findByMovieId(movieId).stream().map((movieStarringEntity) -> {
-                return starringRepository.findById(movieStarringEntity.getStarringId()).orElseThrow().getName();
-            }).collect(Collectors.joining("/"));
-
-            var cast = director + "/" + starring;
-
-            var tag = movieTagRepository.findByMovieId(movieId).stream().map((movieTagEntity) -> {
-                return tagRepository.findById(movieTagEntity.getTagId()).orElseThrow().getName();
+            var genre = movieGenreRepository.findByMovieId(movieId).stream().map((movieGenreEntity) -> {
+                return genreRepository.findById(movieGenreEntity.getGenreId()).orElseThrow().getName();
             }).collect(Collectors.joining(" "));
+            var castDirector = director + "/" + cast;
 
+            movieView.setCastDirector(castDirector);
             movieView.setCountry(country);
-            movieView.setCast(cast);
-            movieView.setTag(tag);
+            movieView.setGenre(genre);
             return movieView;
         }).toList();
         return new PageImpl<>(movieViewList, pageable, movieViewList.size());
@@ -180,20 +171,19 @@ public class MovieService {
         }).collect(Collectors.joining("/"));
 
         var launchViewSet = launchRepository.findByMovieId(movieId).stream().map((launchEntity) -> {
-            return new LaunchView(launchEntity.getId(), launchEntity.getType(), launchEntity.getDate());
+            return new LaunchView(launchEntity.getId(), launchEntity.getDate(), launchEntity.getVersion());
         }).collect(Collectors.toSet());
 
-        var starring = movieStarringRepository.findByMovieId(movieId).stream().map((movieStarringEntity) -> {
-            return starringRepository.findById(movieStarringEntity.getStarringId()).orElseThrow().getName();
+        var cast = movieCastRepository.findByMovieId(movieId).stream().map((movieCastEntity) -> {
+            return castRepository.findById(movieCastEntity.getCastId()).orElseThrow().getName();
         }).collect(Collectors.joining("/"));
 
-        var tag = movieTagRepository.findByMovieId(movieId).stream().map((movieTagEntity) -> {
-            return tagRepository.findById(movieTagEntity.getTagId()).orElseThrow().getName();
+        var genre = movieGenreRepository.findByMovieId(movieId).stream().map((movieGenreEntity) -> {
+            return genreRepository.findById(movieGenreEntity.getGenreId()).orElseThrow().getName();
         }).collect(Collectors.joining(" "));
 
-        return new MovieView(movieId, movieEntity.getChineseName(), country, director, movieEntity.getIntroduction(),
-                launchViewSet, movieEntity.getOriginName(), movieEntity.getPosterUrl(), movieEntity.getReleaseDate(),
-                movieEntity.getScore(), starring, tag, movieEntity.getType());
-
+        return new MovieView(movieId, movieEntity.getImageUrl(), launchViewSet, movieEntity.getOriginalTitle(),
+                movieEntity.getPubdate(), movieEntity.getRating(), movieEntity.getSummary(), movieEntity.getTitle(),
+                cast, director, country, genre);
     }
 }

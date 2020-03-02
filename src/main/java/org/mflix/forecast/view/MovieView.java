@@ -3,89 +3,72 @@ package org.mflix.forecast.view;
 import java.util.Date;
 import java.util.Set;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
-
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.Data;
 
 @Data
+@JsonInclude(Include.NON_EMPTY)
 public class MovieView {
-    private String doubanUrl;
-    private String chineseName;
+    private String subject;
+
+    private long id;
+    @JsonProperty("casts")
+    private Set<CastView> castViewSet;
     @JsonProperty("countries")
     private Set<CountryView> countryViewSet;
     @JsonProperty("directors")
     private Set<DirectorView> directorViewSet;
-    private String introduction;
+    @JsonProperty("genres")
+    private Set<GenreView> genreViewSet;
+    private String imageUrl;
     @JsonProperty("launches")
     private Set<LaunchView> launchViewSet;
-    private String originName;
-    private String posterUrl;
-    private Date releaseDate;
-    private Double score;
-    @JsonProperty("starrings")
-    private Set<StarringView> starringViewSet;
-    @JsonProperty("tags")
-    private Set<TagView> tagViewSet;
-    private String type;
+    private String originalTitle;
+    private Date pubdate;
+    private double rating;
+    private String subtype;
+    private String summary;
+    private String title;
 
-    private long id;
     private String cast;
-    private String country;
+    private String castDirector;
     private String director;
-    private Date launchDate;
-    private String launchType;
-    private String starring;
-    private String tag;
+    private String country;
+    private Date date;
+    private String genre;
+    private String version;
 
     public MovieView() {
     }
 
-    public MovieView(long id, @NotBlank String chineseName, String country, String director,
-            @NotBlank String introduction, @NotEmpty Set<LaunchView> launchViewSet, @NotBlank String originName,
-            @NotBlank String posterUrl, @NotNull Date releaseDate, @NotNull Double score, String starring, String tag,
-            @NotBlank String type) {
+    public MovieView(long id, String imageUrl, String originalTitle, double rating, String subtype, String title,
+            Date date, String version) {
         this.id = id;
-        this.chineseName = chineseName;
-        this.country = country;
-        this.director = director;
-        this.introduction = introduction;
-        this.launchViewSet = launchViewSet;
-        this.originName = originName;
-        this.posterUrl = posterUrl;
-        this.releaseDate = releaseDate;
-        this.score = score;
-        this.starring = starring;
-        this.tag = tag;
-        this.type = type;
+        this.imageUrl = imageUrl;
+        this.originalTitle = originalTitle;
+        this.rating = rating;
+        this.subtype = subtype;
+        this.title = title;
+        this.date = date;
+        this.version = version;
     }
 
-    public MovieView(long id, @NotBlank String chineseName, String cast, String country,
-            @NotEmpty Set<LaunchView> launchViewSet, @NotBlank String originName, @NotBlank String posterUrl,
-            @NotNull Double score, String tag) {
+    public MovieView(long id, String imageUrl, Set<LaunchView> launchViewSet, String originalTitle, Date pubdate,
+            double rating, String summary, String title, String cast, String director, String country, String genre) {
         this.id = id;
-        this.chineseName = chineseName;
+        this.imageUrl = imageUrl;
+        this.launchViewSet = launchViewSet;
+        this.originalTitle = originalTitle;
+        this.pubdate = pubdate;
+        this.rating = rating;
+        this.summary = summary;
+        this.title = title;
         this.cast = cast;
+        this.director = director;
         this.country = country;
-        this.launchViewSet = launchViewSet;
-        this.originName = originName;
-        this.posterUrl = posterUrl;
-        this.score = score;
-        this.tag = tag;
-    }
-
-    public MovieView(long id, @NotBlank String chineseName, Date launchDate, String launchType,
-            @NotBlank String originName, @NotBlank String posterUrl, @NotNull Double score, String type) {
-        this.id = id;
-        this.chineseName = chineseName;
-        this.launchDate = launchDate;
-        this.launchType = launchType;
-        this.originName = originName;
-        this.posterUrl = posterUrl;
-        this.score = score;
-        this.type = type;
+        this.genre = genre;
     }
 }

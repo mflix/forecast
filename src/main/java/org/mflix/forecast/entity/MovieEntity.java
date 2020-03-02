@@ -15,33 +15,33 @@ public class MovieEntity {
     @Id
     @GeneratedValue
     private long id;
-    // 中文名称
-    private String chineseName;
+    // 海报链接
+    private String imageUrl;
+    // 原标题
+    private String originalTitle;
+    // 上映日期
+    private Date pubdate;
+    // 评分
+    private Double rating;
+    // 类型
+    private String subtype;
     // 简介
     @Column(length = 2048)
-    private String introduction;
-    // 英文名称
-    private String originName;
-    // 海报链接
-    private String posterUrl;
-    // 上映日期
-    private Date releaseDate;
-    // 评分
-    private Double score;
-    // 类型
-    private String type;
+    private String summary;
+    // 标题
+    private String title;
 
     public MovieEntity() {
     }
 
-    public MovieEntity(String chineseName, String introduction, String originName, String posterUrl, Date releaseDate,
-            Double score, String type) {
-        this.chineseName = chineseName;
-        this.introduction = introduction;
-        this.originName = originName;
-        this.posterUrl = posterUrl;
-        this.releaseDate = releaseDate;
-        this.score = score;
-        this.type = type;
+    public MovieEntity(String imageUrl, String originalTitle, Date pubdate, Double rating, String subtype,
+            String summary, String title) {
+        this.imageUrl = imageUrl;
+        this.originalTitle = originalTitle;
+        this.pubdate = pubdate;
+        this.rating = rating;
+        this.subtype = subtype;
+        this.summary = summary;
+        this.title = title;
     }
 }

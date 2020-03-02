@@ -9,17 +9,17 @@ import lombok.Data;
 
 @Data
 @Entity
-public class StarringEntity {
+public class GenreEntity {
     @Id
     @GeneratedValue
     private long id;
     @Column(unique = true)
     private String name;
 
-    public StarringEntity() {
+    public GenreEntity() {
     }
 
-    public StarringEntity(String name) {
+    public GenreEntity(String name) {
         this.name = name;
     }
 }

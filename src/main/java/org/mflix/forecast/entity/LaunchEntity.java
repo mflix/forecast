@@ -14,15 +14,15 @@ public class LaunchEntity {
     @Id
     @GeneratedValue
     private long id;
-    private String type;
+    private String version;
     private Date date;
     private long movieId;
 
     public LaunchEntity() {
     }
 
-    public LaunchEntity(String type, Date date, long movieId) {
-        this.type = type;
+    public LaunchEntity(String version, Date date, long movieId) {
+        this.version = version;
         this.date = date;
         this.movieId = movieId;
     }

@@ -1,5 +1,6 @@
 package org.mflix.forecast.entity;
 
+import java.util.Collection;
 import java.util.Date;
 import java.util.Set;
 

@@ -9,7 +9,6 @@ import lombok.Data;
 @Configuration
 @ConfigurationProperties("application")
 public class ApplicationProperties {
-    private String testPath;
+    private String doubanApiKey;
     // private String avatarPath;
-    // private String postersPath;
 }

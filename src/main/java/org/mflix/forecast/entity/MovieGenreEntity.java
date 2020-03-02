@@ -8,18 +8,18 @@ import lombok.Data;
 
 @Data
 @Entity
-public class MovieTagEntity {
+public class MovieGenreEntity {
     @Id
     @GeneratedValue
     private long id;
     private long movieId;
-    private long tagId;
+    private long genreId;
 
-    public MovieTagEntity() {
+    public MovieGenreEntity() {
     }
 
-    public MovieTagEntity(long movieId, long tagId) {
+    public MovieGenreEntity(long movieId, long genreId) {
         this.movieId = movieId;
-        this.tagId = tagId;
+        this.genreId = genreId;
     }
 }

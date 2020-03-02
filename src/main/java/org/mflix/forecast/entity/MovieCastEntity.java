@@ -8,18 +8,18 @@ import lombok.Data;
 
 @Data
 @Entity
-public class MovieStarringEntity {
+public class MovieCastEntity {
     @Id
     @GeneratedValue
     private long id;
     private long movieId;
-    private long starringId;
+    private long castId;
 
-    public MovieStarringEntity() {
+    public MovieCastEntity() {
     }
 
-    public MovieStarringEntity(long movieId, long starringId) {
+    public MovieCastEntity(long movieId, long castId) {
         this.movieId = movieId;
-        this.starringId = starringId;
+        this.castId = castId;
     }
 }

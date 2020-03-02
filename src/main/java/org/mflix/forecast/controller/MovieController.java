@@ -39,12 +39,6 @@ public class MovieController {
         return responseComponent.generate(StatusEnumeration.S0, HttpStatus.OK, movieView);
     }
 
-    @GetMapping("/")
-    public ResponseEntity<ResponseView> getAll() {
-        var movieViewList = movieService.readAll();
-        return responseComponent.generate(StatusEnumeration.S0, HttpStatus.OK, movieViewList);
-    }
-
     @GetMapping("/page/")
     public ResponseEntity<ResponseView> getAllWithPage(Pageable pageable) {
         var movieViewPage = movieService.readAllWithPage(pageable);
@@ -59,8 +53,8 @@ public class MovieController {
 
     @GetMapping("/launch/page/")
     public ResponseEntity<ResponseView> getAllByLaunchWithPage(Pageable pageable,
-            @RequestParam(required = false) String launchType, @RequestParam(required = false) String movieType) {
-        var movieView = movieService.readAllSortByLaunchDateWithPage(pageable, launchType, movieType);
-        return responseComponent.generate(StatusEnumeration.S0, HttpStatus.OK, movieView);
+            @RequestParam(required = false) String version, @RequestParam(required = false) String subtype) {
+        var movieLaunchView = movieService.readAllSortByLaunchDateWithPage(pageable, version, subtype);
+        return responseComponent.generate(StatusEnumeration.S0, HttpStatus.OK, movieLaunchView);
     }
 }

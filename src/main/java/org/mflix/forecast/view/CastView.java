@@ -1,7 +1,5 @@
 package org.mflix.forecast.view;
 
-import java.util.Date;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
@@ -9,17 +7,19 @@ import lombok.Data;
 
 @Data
 @JsonInclude(Include.NON_EMPTY)
-public class LaunchView {
+public class CastView {
     private long id;
-    private Date date;
-    private String version;
+    private String name;
 
-    public LaunchView() {
+    public CastView() {
     }
 
-    public LaunchView(long id, Date date, String version) {
+    public CastView(String name) {
+        this.name = name;
+    }
+
+    public CastView(long id, String name) {
         this.id = id;
-        this.date = date;
-        this.version = version;
+        this.name = name;
     }
 }

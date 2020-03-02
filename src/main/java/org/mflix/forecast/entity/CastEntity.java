@@ -1,5 +1,6 @@
 package org.mflix.forecast.entity;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -8,16 +9,17 @@ import lombok.Data;
 
 @Data
 @Entity
-public class TestEntity {
+public class CastEntity {
     @Id
     @GeneratedValue
     private long id;
-    private String text;
+    @Column(unique = true)
+    private String name;
 
-    public TestEntity() {
+    public CastEntity() {
     }
 
-    public TestEntity(String text) {
-        this.text = text;
+    public CastEntity(String name) {
+        this.name = name;
     }
 }

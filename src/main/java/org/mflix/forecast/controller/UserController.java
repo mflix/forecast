@@ -31,40 +31,4 @@ public class UserController {
         this.responseComponent = responseComponent;
         this.userService = userService;
     }
-
-    @PostMapping("/")
-    public ResponseEntity<ResponseView> postByView(@Valid @RequestBody UserView userView) {
-        userView = userService.createByView(userView);
-        return responseComponent.generate(StatusEnumeration.S0, HttpStatus.OK, userView);
-    }
-
-    @GetMapping("/")
-    public ResponseEntity<ResponseView> getAll() {
-        var userViewList = userService.readAll();
-        return responseComponent.generate(StatusEnumeration.S0, HttpStatus.OK, userViewList);
-    }
-
-    @GetMapping("/page/")
-    public ResponseEntity<ResponseView> getAllWithPage(Pageable pageable) {
-        var userViewPage = userService.readAllWithPage(pageable);
-        return responseComponent.generate(StatusEnumeration.S0, HttpStatus.OK, userViewPage);
-    }
-
-    @GetMapping("/{id}/")
-    public ResponseEntity<ResponseView> getById(@PathVariable long id) {
-        var userView = userService.readById(id);
-        return responseComponent.generate(StatusEnumeration.S0, HttpStatus.OK, userView);
-    }
-
-    @PutMapping("/{id}/")
-    public ResponseEntity<ResponseView> putByIdAndView(@PathVariable long id, @Valid @RequestBody UserView userView) {
-        userView = userService.updateByIdAndView(id, userView);
-        return responseComponent.generate(StatusEnumeration.S0, HttpStatus.OK, userView);
-    }
-
-    @DeleteMapping("/{id}/")
-    public ResponseEntity<ResponseView> deleteById(@PathVariable long id) {
-        userService.deleteById(id);
-        return responseComponent.generate(StatusEnumeration.S0, HttpStatus.OK);
-    }
 }
