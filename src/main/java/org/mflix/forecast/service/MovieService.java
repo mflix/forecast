@@ -93,11 +93,6 @@ public class MovieService {
         movieView.getLaunchViewSet().stream().forEachOrdered((launchView) -> {
             launchRepository.save(new LaunchEntity(launchView.getVersion(), launchView.getDate(), movieId));
         });
-        movieView.getGenreViewSet().stream().forEachOrdered((genreView) -> {
-            movieGenreRepository.save(new MovieGenreEntity(movieId, genreRepository
-                    .save(genreRepository.findByName(genreView.getName()).orElse(new GenreEntity(genreView.getName())))
-                    .getId()));
-        });
         return movieView;
     }
 
