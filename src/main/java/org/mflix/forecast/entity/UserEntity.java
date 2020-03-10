@@ -32,17 +32,20 @@ public class UserEntity implements UserDetails {
     @Column(unique = true)
     private String username;
     private Date date;
-
     private String email;
     private String nickname;
     private String gender;
     private String avatarUrl;
-
+    private String inviteCod;//邀请码
+    private Integer status;//状态 1启用，2禁用
+    private Date createTimel;//创建时间
+    private Date updateTime;//更新时间
+    private String phone;//手机号
     public UserEntity() {
     }
 
     public UserEntity(boolean accountNonExpired, boolean accountNonLocked, Set<GrantedAuthority> authorities,
-            boolean credentialsNonExpired, boolean enabled, String password, String username, Date date) {
+                      boolean credentialsNonExpired, boolean enabled, String password, String username, Date date) {
         this.accountNonExpired = accountNonExpired;
         this.accountNonLocked = accountNonLocked;
         this.authorities = authorities;

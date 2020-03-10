@@ -11,6 +11,7 @@ import org.mflix.forecast.properties.ApplicationProperties;
 import org.mflix.forecast.repository.UserRepository;
 import org.mflix.forecast.view.UserView;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -18,6 +19,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -31,7 +33,7 @@ public class UserService implements UserDetailsService {
 
     @Autowired
     public UserService(RoleComponent roleComponent, ApplicationProperties applicationProperties,
-            UserRepository userRepository) {
+                       UserRepository userRepository) {
         this.roleComponent = roleComponent;
         this.applicationProperties = applicationProperties;
         this.userRepository = userRepository;
@@ -40,5 +42,33 @@ public class UserService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return userRepository.findByUsername(username).orElseThrow();
+    }
+
+    /**
+     * 创建会员
+     *
+     * @param user
+     * @return
+     */
+    public UserEntity createUser(UserEntity user) {
+        PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
+        user.setCreateTimel(new Date());
+        user.setUpdateTime(new Date());
+        user.setStatus(1);
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        userRepository.save(user);
+        return user;
+    }
+
+    /**
+     * 根据会员名称获取会员
+     *
+     * @param username
+     * @return
+     */
+    public UserEntity getUserByUserName(String username) {
+
+        UserEntity bean = userRepository.findByUsername(username).orElse(null);
+        return bean;
     }
 }
