@@ -43,4 +43,8 @@ public class UserController {
         userService.createUser(user);
         return responseComponent.generate(StatusEnumeration.S0, HttpStatus.OK, user);
     }
+    @PostMapping("/login")
+    public ResponseEntity<ResponseView> login(UserEntity user) {
+        return responseComponent.generate(StatusEnumeration.S0, HttpStatus.OK, user);
+    }
 }

@@ -1,5 +1,6 @@
 package org.mflix.forecast.service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -15,6 +16,9 @@ import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -22,6 +26,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
 
 @Service
 public class UserService implements UserDetailsService {
@@ -41,7 +46,15 @@ public class UserService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return userRepository.findByUsername(username).orElseThrow();
+        UserEntity model=userRepository.findByUsername(username).orElseThrow();
+        if(ObjectUtils.isEmpty(model)) {
+            throw new UsernameNotFoundException("user + " + username + "not found.");
+        }
+        PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
+        List<SimpleGrantedAuthority> authorities = new ArrayList<SimpleGrantedAuthority>();
+        UserDetails bean=new org.springframework.security.core.userdetails.User(
+                model.getUsername(),model.getPassword(),authorities);
+        return bean;
     }
 
     /**
@@ -51,7 +64,6 @@ public class UserService implements UserDetailsService {
      * @return
      */
     public UserEntity createUser(UserEntity user) {
-        PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
         user.setCreateTimel(new Date());
         user.setUpdateTime(new Date());
         user.setStatus(1);
@@ -67,7 +79,6 @@ public class UserService implements UserDetailsService {
      * @return
      */
     public UserEntity getUserByUserName(String username) {
-
         UserEntity bean = userRepository.findByUsername(username).orElse(null);
         return bean;
     }
