@@ -2,6 +2,8 @@ package org.mflix.forecast.controller;
 
 import javax.validation.Valid;
 
+import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import org.mflix.forecast.component.ResponseComponent;
 import org.mflix.forecast.core.BaseRespones;
 import org.mflix.forecast.entity.UserEntity;
@@ -43,15 +45,15 @@ public class UserController {
      * @return
      */
     @PostMapping("/register")
-    public BaseRespones register(UserEntity user) {
+    public String register(UserEntity user) {
         //判断账号是否存在
         if (!ObjectUtils.isEmpty(userService.getUserByUserName(user.getUsername()))) {
-            return BaseRespones.failed("账号已经存在");
+            return JSONObject.toJSONString(BaseRespones.failed("账号已经存在"),SerializerFeature.WriteNullStringAsEmpty);
         }
         //会员创建
         userService.createUser(user);
         UserParam model = dataChange(user);
-        return BaseRespones.ok(model);
+        return JSONObject.toJSONString(BaseRespones.ok(model),SerializerFeature.WriteNullStringAsEmpty);
     }
 
     /**
@@ -61,17 +63,17 @@ public class UserController {
      * @return
      */
     @GetMapping("/list")
-    public BaseRespones getList() {
+    public String getList() {
         //判断账号是否存在
         Page<UserEntity> page = userService.getList();
         if (ObjectUtils.isEmpty(page) || ObjectUtils.isEmpty(page.toList())) {
-            return BaseRespones.ok();
+            return JSONObject.toJSONString(BaseRespones.ok(),SerializerFeature.WriteNullStringAsEmpty);
         } else {
             List<UserParam> list = new ArrayList<UserParam>();
             for (UserEntity bean : page.toList()) {
                 list.add(dataChange(bean));
             }
-            return BaseRespones.ok(list);
+            return JSONObject.toJSONString(BaseRespones.ok(list),SerializerFeature.WriteNullStringAsEmpty);
         }
     }
 
@@ -82,9 +84,9 @@ public class UserController {
      * @return
      */
     @PostMapping("/login")
-    public ResponseEntity<ResponseView> login(UserEntity user) {
+    public String login(UserEntity user) {
         UserEntity userBean = userService.getUserByUserName(user.getUsername());
-        return responseComponent.generate(StatusEnumeration.S0, HttpStatus.OK, dataChange(userBean));
+        return JSONObject.toJSONString(responseComponent.generate(StatusEnumeration.S0, HttpStatus.OK, dataChange(userBean)),SerializerFeature.WriteNullStringAsEmpty);
     }
 
     /**
@@ -96,12 +98,12 @@ public class UserController {
      * @return
      */
     @PostMapping("/modifypassword")
-    public BaseRespones changePassword(String username, String oldpassword, String newpassword) {
+    public String changePassword(String username, String oldpassword, String newpassword) {
         Map map = userService.userPasswordChange(username, oldpassword, newpassword);
         if ("ok".equals(map.get("message"))) {
-            return BaseRespones.ok(dataChange((UserEntity) map.get("object")));
+            return JSONObject.toJSONString(BaseRespones.ok(dataChange((UserEntity) map.get("object"))),SerializerFeature.WriteNullStringAsEmpty);
         } else {
-            return BaseRespones.failed(map.get("message").toString());
+            return JSONObject.toJSONString(BaseRespones.failed(map.get("message").toString()),SerializerFeature.WriteNullStringAsEmpty);
         }
     }
 
@@ -115,12 +117,12 @@ public class UserController {
      * @return
      */
     @PostMapping("/modifyinfo")
-    public BaseRespones updateUser(Long id, String sex, String nickname, MultipartFile file) {
+    public String updateUser(Long id, String sex, String nickname, MultipartFile file) {
         Map map = userService.updateUser(id, sex, nickname, file);
         if ("ok".equals(map.get("message"))) {
-            return BaseRespones.ok(dataChange((UserEntity) map.get("object")));
+            return JSONObject.toJSONString(BaseRespones.ok(dataChange((UserEntity) map.get("object"))), SerializerFeature.WriteNullStringAsEmpty);
         } else {
-            return BaseRespones.failed(map.get("message").toString());
+            return JSONObject.toJSONString(BaseRespones.failed(map.get("message").toString()),SerializerFeature.WriteNullStringAsEmpty);
         }
     }
 
