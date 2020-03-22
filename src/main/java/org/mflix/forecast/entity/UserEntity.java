@@ -41,11 +41,13 @@ public class UserEntity implements UserDetails {
     private Date createTimel;//创建时间
     private Date updateTime;//更新时间
     private String phone;//手机号
+    private String sex;
+
     public UserEntity() {
     }
 
     public UserEntity(boolean accountNonExpired, boolean accountNonLocked, Set<GrantedAuthority> authorities,
-                      boolean credentialsNonExpired, boolean enabled, String password, String username, Date date) {
+                      boolean credentialsNonExpired, boolean enabled, String password, String username, Date date, String sex) {
         this.accountNonExpired = accountNonExpired;
         this.accountNonLocked = accountNonLocked;
         this.authorities = authorities;
@@ -54,5 +56,6 @@ public class UserEntity implements UserDetails {
         this.password = password;
         this.username = username;
         this.date = date;
+        this.sex = sex;
     }
 }

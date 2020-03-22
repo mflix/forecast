@@ -20,12 +20,13 @@ public class CommentService {
 
     private final CommentRepository commentRepository;
     private final LikeCommentRepository likeCommentRepository;
-
+    private final UserRepository userRepository;
 
     @Autowired
-    public CommentService(CommentRepository commentRepository, LikeCommentRepository likeCommentRepository) {
+    public CommentService(CommentRepository commentRepository, LikeCommentRepository likeCommentRepository, UserRepository userRepository) {
         this.commentRepository = commentRepository;
         this.likeCommentRepository = likeCommentRepository;
+        this.userRepository = userRepository;
 
     }
 
@@ -81,14 +82,12 @@ public class CommentService {
 
     private CommentView transform(CommentEntity commentEntity) {
         var userId = commentEntity.getUserId();
-
-        //TODO 根据用户的id查询该用户的基本信息以及是否点赞
-
+        var userEntity = userRepository.findById(userId).orElseThrow();
         var likeEntity = likeCommentRepository.findByCommentIdAndUserId(commentEntity.getId(), userId);
         boolean like = (likeEntity != null && likeEntity.isIslike());
 
 
-        return new CommentView(commentEntity.getId(), userId, ""/*用户昵称*/, ""/*用户头像*/,
+        return new CommentView(commentEntity.getId(), userId, userEntity.getNickname(), userEntity.getAvatarUrl(),
                 commentEntity.getMovieId(), commentEntity.getContent(), commentEntity.getLikenum(), commentEntity.getIsdelete(),
                 commentEntity.getDate(), like);
     }
