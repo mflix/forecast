@@ -14,6 +14,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.ObjectUtils;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -59,7 +60,7 @@ public class UserController {
      * @param
      * @return
      */
-    @PostMapping("/list")
+    @GetMapping("/list")
     public BaseRespones getList() {
         //判断账号是否存在
         Page<UserEntity> page = userService.getList();
