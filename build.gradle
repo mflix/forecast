@@ -7,7 +7,6 @@ plugins {
 group = 'org.mflix'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '13'
-
 configurations {
 	compileOnly {
 		extendsFrom annotationProcessor
@@ -32,6 +31,7 @@ dependencies {
 	testImplementation('org.springframework.boot:spring-boot-starter-test') {
 		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
 	}
+	implementation 'com.alibaba:fastjson:1.1.54.android'
 	testImplementation 'org.springframework.security:spring-security-test'
 }
 
