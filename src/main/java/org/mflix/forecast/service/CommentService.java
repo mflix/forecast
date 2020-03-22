@@ -85,11 +85,12 @@ public class CommentService {
         //TODO 根据用户的id查询该用户的基本信息以及是否点赞
 
         var likeEntity = likeCommentRepository.findByCommentIdAndUserId(commentEntity.getId(), userId);
+        boolean like = (likeEntity != null && likeEntity.isIslike());
 
 
         return new CommentView(commentEntity.getId(), userId, ""/*用户昵称*/, ""/*用户头像*/,
                 commentEntity.getMovieId(), commentEntity.getContent(), commentEntity.getLikenum(), commentEntity.getIsdelete(),
-                commentEntity.getDate(), likeEntity.isIslike());
+                commentEntity.getDate(), like);
     }
 
 

@@ -35,7 +35,7 @@ public class CommentController {
         this.responseComponent = responseComponent;
     }
 
-    @PostMapping("/")
+    @PostMapping("/addcomment/")
     public ResponseEntity<ResponseView> postByBody(@Valid @RequestBody CommentView commentView) {
         commentView = commentService.createByBody(commentView);
         return responseComponent.generate(StatusEnumeration.S0, HttpStatus.OK, commentView);
