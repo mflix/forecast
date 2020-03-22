@@ -41,17 +41,17 @@ public class CommentService {
     }
 
     //评论分页查询
-    public Page<CommentView> readAllWithPage(long movieId, Pageable pageable) {
+    public Page<CommentView> readAllWithPage(long movieId, long userId, Pageable pageable) {
         var commentEntityPage = commentRepository.findAllByMovieId(movieId, pageable);
 
-        var commentViewList = transform(commentEntityPage.toList());
+        var commentViewList = transform(commentEntityPage.toList(), userId);
         return new PageImpl<>(commentViewList, pageable, commentViewList.size());
     }
 
 
-    private List<CommentView> transform(List<CommentEntity> commentEntityList) {
+    private List<CommentView> transform(List<CommentEntity> commentEntityList, long userId) {
         return commentEntityList.stream().map((commentEntity) -> {
-            return transform(commentEntity);
+            return transform(commentEntity, userId);
         }).collect(Collectors.toList());
     }
 
@@ -80,9 +80,9 @@ public class CommentService {
     }
 
 
-    private CommentView transform(CommentEntity commentEntity) {
-        var userId = commentEntity.getUserId();
-        var userEntity = userRepository.findById(userId).orElseThrow();
+    private CommentView transform(CommentEntity commentEntity, long userId) {
+        var commentEntityUserId = commentEntity.getUserId();
+        var userEntity = userRepository.findById(commentEntityUserId).orElseThrow();
         var likeEntity = likeCommentRepository.findByCommentIdAndUserId(commentEntity.getId(), userId);
         boolean like = (likeEntity != null && likeEntity.isIslike());
 
