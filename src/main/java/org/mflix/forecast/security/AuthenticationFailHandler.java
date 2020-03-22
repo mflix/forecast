@@ -1,5 +1,7 @@
 package org.mflix.forecast.security;
 
+import org.mflix.forecast.entity.UserEntity;
+import org.mflix.forecast.param.UserParam;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
 import org.springframework.stereotype.Service;
@@ -25,4 +27,5 @@ public class AuthenticationFailHandler extends SimpleUrlAuthenticationFailureHan
         response.getWriter().println("{\"code\":\"401\"," +
                 "\"message\": \"" + exception.getMessage() + "\",\"serverTime\": " + System.currentTimeMillis() + "}");
     }
+
 }
