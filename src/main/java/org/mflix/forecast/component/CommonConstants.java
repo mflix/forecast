@@ -82,6 +82,6 @@ public interface CommonConstants {
 	/**
 	 * 失败标记
 	 */
-	Integer FAIL = 1;
+	Integer FAIL = 2;
 
 }
